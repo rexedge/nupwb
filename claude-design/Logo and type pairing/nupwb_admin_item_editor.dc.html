@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#E7DDC8; font-family:'Source Sans 3',system-ui,sans-serif; }
+  a { color:#0E5C34; text-decoration:none; }
+  a:hover { color:#083D22; }
+  input { font-family:'Source Sans 3',system-ui,sans-serif; }
+  ::-webkit-scrollbar { height:6px; width:6px; }
+  ::-webkit-scrollbar-thumb { background:#C9BCA0; border-radius:6px; }
+</style>
+</helmet>
+
+<section style="padding:56px 56px 96px;display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:#1E1B16">NUPWB — Admin item management</div>
+    <div style="font-size:16px;color:#6E6455">item list · inline price edit · bulk mode</div>
+  </div>
+
+  <div style="display:flex;gap:56px;align-items:flex-start;flex-wrap:wrap">
+
+    <div id="8a" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:13px;font-weight:700;letter-spacing:.14em;color:#FBF6EC;background:#0E5C34;padding:5px 10px;border-radius:4px">8a</span>
+        <span style="font-size:17px;font-weight:600;color:#1E1B16">Item list — 375px</span>
+        <span style="font-size:15px;color:#6E6455">live: search, scope, chips, tap any price, bulk mode</span>
+      </div>
+
+      <div style="position:relative;width:375px;height:812px;background:#FBF6EC;border:1px solid #D8CBAF;box-shadow:0 18px 44px rgba(30,27,22,.13);overflow:hidden">
+
+        <div style="position:absolute;top:0;left:0;right:0;z-index:20">
+          <div style="background:#0E5C34;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="background:#FFFDF8;border-radius:4px;padding:3px 5px;display:flex">
+                <img src="assets/nupwb-logo.jpeg" alt="NUPWB" style="height:32px;width:auto;display:block;mix-blend-mode:multiply">
+              </div>
+              <div style="font-size:17px;font-weight:600;color:#FBF6EC">Items</div>
+            </div>
+            <div style="width:44px;height:44px;border-radius:50%;background:#FBF6EC;border:1px solid #D4A32C;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#0E5C34">TO</div>
+          </div>
+          <div style="height:8px;background-color:#083D22;background-image:linear-gradient(135deg,#D4A32C 25%,transparent 25%,transparent 75%,#D4A32C 75%),linear-gradient(45deg,#B5562A 25%,transparent 25%,transparent 75%,#B5562A 75%);background-size:16px 16px;background-position:0 0,8px 0"></div>
+
+          <div style="background:#FBF6EC;border-bottom:1px solid #E4D8BC;padding:12px 14px 10px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;gap:10px;align-items:center">
+              <div style="flex:1;display:flex;background:#EFE7D6;border:1px solid #D8CBAF;border-radius:8px;padding:3px">
+                <div onClick="{{ pickDrinks }}" style="flex:1;height:42px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:16px;font-weight:600;cursor:pointer;background:{{ drinksBg }};color:{{ drinksColor }};box-shadow:{{ drinksShadow }}">Drinks</div>
+                <div onClick="{{ pickFood }}" style="flex:1;height:42px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:16px;font-weight:600;cursor:pointer;background:{{ foodBg }};color:{{ foodColor }};box-shadow:{{ foodShadow }}">Food</div>
+              </div>
+              <div onClick="{{ toggleBulk }}" style="flex:0 0 auto;height:48px;display:flex;align-items:center;gap:8px;padding:0 14px;border-radius:6px;cursor:pointer;background:{{ bulkBg }};border:1px solid {{ bulkBorder }};color:{{ bulkColor }};font-size:15px;font-weight:600">
+                <span style="display:flex;flex-direction:column;gap:3px">
+                  <span style="width:14px;height:2px;background:{{ bulkColor }};display:block"></span>
+                  <span style="width:14px;height:2px;background:{{ bulkColor }};display:block"></span>
+                  <span style="width:14px;height:2px;background:{{ bulkColor }};display:block"></span>
+                </span>Bulk
+              </div>
+            </div>
+            <div style="height:48px;background:#FFFDF8;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;gap:10px;padding:0 12px">
+              <div style="position:relative;width:17px;height:17px;flex:0 0 17px">
+                <div style="position:absolute;top:0;left:0;width:12px;height:12px;border:2px solid #6E6455;border-radius:50%"></div>
+                <div style="position:absolute;bottom:1px;right:1px;width:7px;height:2px;background:#6E6455;transform:rotate(45deg)"></div>
+              </div>
+              <input value="{{ q }}" onChange="{{ onQuery }}" placeholder="Search items…" style="flex:1;border:none;outline:none;background:transparent;font-size:16px;color:#1E1B16;min-width:0">
+            </div>
+            <div style="position:relative">
+              <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none">
+                <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="4">
+                  <div onClick="{{ chip.pick }}" style="flex:0 0 auto;height:36px;display:flex;align-items:center;padding:0 13px;border-radius:18px;font-size:15px;font-weight:600;white-space:nowrap;cursor:pointer;background:{{ chip.bg }};border:1px solid {{ chip.border }};color:{{ chip.color }}">{{ chip.label }}</div>
+                </sc-for>
+              </div>
+              <div style="position:absolute;right:0;top:0;bottom:2px;width:32px;pointer-events:none;background:linear-gradient(90deg,rgba(251,246,236,0),#FBF6EC 78%)"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="position:absolute;top:{{ listTop }};left:0;right:0;bottom:{{ listBottom }};overflow-y:auto;padding:12px 14px 20px;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:14px;color:#6E6455;padding:0 2px">{{ countLine }}</div>
+          <sc-for list="{{ items }}" as="it" hint-placeholder-count="6">
+            <div style="position:relative;flex:0 0 auto;border-radius:6px;overflow:hidden;opacity:{{ it.dim }}">
+              <div style="position:absolute;top:0;right:0;bottom:0;display:flex">
+                <div style="width:84px;background:#B5562A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+                  <div style="width:16px;height:2px;background:#FBF6EC"></div>
+                  <div style="font-size:13px;font-weight:600;color:#FBF6EC">Finished</div>
+                </div>
+                <div style="width:84px;background:#B7202B;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+                  <div style="width:14px;height:16px;border:2px solid #FBF6EC;border-radius:2px"></div>
+                  <div style="font-size:13px;font-weight:600;color:#FBF6EC">Delete</div>
+                </div>
+              </div>
+              <div style="position:relative;background:#FFFDF8;border:1px solid {{ it.border }};border-radius:6px;display:flex;align-items:center;gap:11px;padding:0 8px 0 0;min-height:70px;transform:translateX({{ it.slide }})">
+                <sc-if value="{{ bulkOn }}" hint-placeholder-val="{{ false }}">
+                  <div onClick="{{ it.toggleSel }}" style="flex:0 0 44px;width:44px;height:70px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+                    <div style="width:24px;height:24px;border-radius:4px;border:2px solid {{ it.boxBorder }};background:{{ it.boxFill }};display:flex;align-items:center;justify-content:center">
+                      <div style="width:10px;height:6px;border-left:2px solid #FBF6EC;border-bottom:2px solid #FBF6EC;transform:rotate(-45deg) translate(1px,-1px);opacity:{{ it.tick }}"></div>
+                    </div>
+                  </div>
+                </sc-if>
+                <div style="flex:0 0 48px;width:48px;height:48px;margin-left:{{ it.thumbMargin }};border-radius:5px;background:#EFE7D6;border:1px solid #E0CD98;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:#B5562A">{{ it.initial }}</div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:3px;min-width:0;padding:10px 0">
+                  <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+                    <span style="font-size:16px;font-weight:600;color:#1E1B16">{{ it.name }}</span>
+                    <sc-if value="{{ it.finished }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#FBF6EC;background:#B7202B;padding:3px 6px;border-radius:3px">Finished</span>
+                    </sc-if>
+                  </div>
+                  <div style="font-size:14px;color:#6E6455">{{ it.cat }}</div>
+                </div>
+                <sc-if value="{{ it.editing }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <div style="height:44px;min-width:96px;background:#FBF6EC;border:2px solid #0E5C34;border-radius:6px;display:flex;align-items:center;gap:2px;padding:0 10px">
+                      <span style="font-size:17px;font-weight:600;color:#6E6455">₦</span>
+                      <span style="font-size:18px;font-weight:700;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">{{ draft }}</span>
+                      <span style="width:2px;height:20px;background:#0E5C34;margin-left:1px"></span>
+                    </div>
+                    <div onClick="{{ saveEdit }}" style="width:44px;height:44px;border-radius:6px;background:#0E5C34;display:flex;align-items:center;justify-content:center;cursor:pointer">
+                      <div style="width:12px;height:7px;border-left:2.5px solid #FBF6EC;border-bottom:2.5px solid #FBF6EC;transform:rotate(-45deg) translate(1px,-2px)"></div>
+                    </div>
+                    <div onClick="{{ cancelEdit }}" style="width:44px;height:44px;border-radius:6px;border:1px solid #C9BCA0;display:flex;align-items:center;justify-content:center;font-size:20px;color:#6E6455;cursor:pointer">×</div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ it.notEditing }}" hint-placeholder-val="{{ true }}">
+                  <div onClick="{{ it.startEdit }}" style="display:flex;align-items:center;gap:8px;height:70px;padding:0 4px 0 8px;cursor:pointer">
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+                      <span style="font-size:17px;font-weight:700;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums;white-space:nowrap;text-decoration:{{ it.strike }}">{{ it.priceText }}</span>
+                      <span style="font-size:12px;color:#B5562A;font-weight:600">tap to edit</span>
+                    </div>
+                    <div style="width:36px;height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+                      <div style="width:4px;height:4px;border-radius:50%;background:#6E6455"></div>
+                      <div style="width:4px;height:4px;border-radius:50%;background:#6E6455"></div>
+                      <div style="width:4px;height:4px;border-radius:50%;background:#6E6455"></div>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ showFab }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;right:16px;bottom:96px;z-index:25;width:60px;height:60px;border-radius:50%;background:#0E5C34;border:1px solid #D4A32C;box-shadow:0 8px 20px rgba(8,61,34,.42);display:flex;align-items:center;justify-content:center;cursor:pointer">
+            <div style="position:relative;width:22px;height:22px">
+              <div style="position:absolute;top:10px;left:0;width:22px;height:2.5px;background:#FBF6EC"></div>
+              <div style="position:absolute;left:10px;top:0;width:2.5px;height:22px;background:#FBF6EC"></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:0;right:0;bottom:0;z-index:30;background:#EFE7D6;border-top:1px solid #C9BCA0;padding:10px 8px 12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:0 8px 8px">
+              <div style="font-size:15px;color:#6E6455">{{ editingName }}</div>
+              <div style="font-size:15px;font-weight:600;color:#6E6455">was {{ editingWas }}</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px">
+              <sc-for list="{{ keys }}" as="k" hint-placeholder-count="12">
+                <div onClick="{{ k.press }}" style="height:52px;background:{{ k.bg }};border:1px solid #D8CBAF;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;color:#1E1B16;cursor:pointer">{{ k.label }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ bulkBarOn }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:0;right:0;bottom:0;z-index:28;background:#FFFDF8;border-top:1px solid #D4A32C;box-shadow:0 -6px 18px rgba(30,27,22,.12);padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="font-size:16px;font-weight:700;color:#1E1B16">{{ selCount }} selected</div>
+              <div onClick="{{ clearSel }}" style="font-size:15px;font-weight:600;color:#0E5C34;cursor:pointer">Clear</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <div onClick="{{ openAdjust }}" style="flex:1;height:52px;display:flex;align-items:center;justify-content:center;background:#0E5C34;border-radius:6px;color:#FBF6EC;font-size:15px;font-weight:600;cursor:pointer">Adjust Prices</div>
+              <div style="flex:1;height:52px;display:flex;align-items:center;justify-content:center;border:1px solid #B5562A;border-radius:6px;color:#B5562A;font-size:15px;font-weight:600">Mark Finished</div>
+              <div style="flex:1;height:52px;display:flex;align-items:center;justify-content:center;border:1px solid #D4A32C;border-radius:6px;color:#0E5C34;font-size:15px;font-weight:600">Category</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tabsOn }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:0;right:0;bottom:0;z-index:20;background:#FFFDF8;border-top:1px solid #D4A32C;display:grid;grid-template-columns:repeat(4,1fr);height:78px">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">
+              <div style="width:18px;height:18px;border-radius:3px;border:2px solid #6E6455"></div>
+              <div style="font-size:13px;font-weight:500;color:#6E6455">Dashboard</div>
+            </div>
+            <div style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">
+              <div style="position:absolute;top:0;left:14px;right:14px;height:3px;background:#D4A32C"></div>
+              <div style="width:18px;height:18px;border-radius:3px;border:2px solid #0E5C34;background:rgba(212,163,44,.35)"></div>
+              <div style="font-size:13px;font-weight:700;color:#0E5C34">Menu</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">
+              <div style="width:18px;height:18px;border-radius:2px;border:2px solid #6E6455"></div>
+              <div style="font-size:13px;font-weight:500;color:#6E6455">QR</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">
+              <div style="width:18px;height:18px;border-radius:50%;border:2px solid #6E6455"></div>
+              <div style="font-size:13px;font-weight:500;color:#6E6455">Settings</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ adjustOn }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:40;background:rgba(30,27,22,.45)">
+            <div onClick="{{ closeAdjust }}" style="position:absolute;inset:0"></div>
+            <div style="position:absolute;left:0;right:0;bottom:0;background:#FFFDF8;border-top:1px solid #D4A32C;border-radius:12px 12px 0 0;padding:18px 18px 22px;display:flex;flex-direction:column;gap:16px">
+              <div style="width:44px;height:4px;border-radius:2px;background:#D8CBAF;align-self:center"></div>
+              <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#1E1B16">Adjust prices</div>
+              <div style="display:flex;gap:10px">
+                <div onClick="{{ setUp }}" style="flex:1;height:52px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:6px;cursor:pointer;border:{{ upBorder }};background:{{ upBg }};font-size:17px;font-weight:700;color:{{ upColor }}">+ Increase</div>
+                <div onClick="{{ setDown }}" style="flex:1;height:52px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:6px;cursor:pointer;border:{{ downBorder }};background:{{ downBg }};font-size:17px;font-weight:700;color:{{ downColor }}">− Decrease</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <label style="font-size:15px;font-weight:600;color:#1E1B16">By</label>
+                <div style="display:flex;gap:10px">
+                  <div style="flex:1;height:52px;background:#FBF6EC;border:2px solid #0E5C34;border-radius:6px;display:flex;align-items:center;gap:4px;padding:0 14px">
+                    <span style="font-size:17px;color:#6E6455">{{ adjPrefix }}</span>
+                    <span style="font-size:18px;font-weight:700;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">{{ adjValue }}</span>
+                    <span style="font-size:17px;color:#6E6455">{{ adjSuffix }}</span>
+                  </div>
+                  <div style="flex:0 0 132px;display:flex;background:#EFE7D6;border:1px solid #D8CBAF;border-radius:8px;padding:3px">
+                    <div onClick="{{ setNaira }}" style="flex:1;height:44px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:16px;font-weight:700;cursor:pointer;background:{{ nairaBg }};color:{{ nairaColor }}">₦</div>
+                    <div onClick="{{ setPct }}" style="flex:1;height:44px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:16px;font-weight:700;cursor:pointer;background:{{ pctBg }};color:{{ pctColor }}">%</div>
+                  </div>
+                </div>
+              </div>
+              <div style="background:#FBF6EC;border:1px solid #E0CD98;border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:4px">
+                <div style="font-size:15px;color:#6E6455">Preview</div>
+                <div style="font-size:17px;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">{{ previewLine }}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div onClick="{{ closeAdjust }}" style="height:56px;display:flex;align-items:center;justify-content:center;background:#0E5C34;border-radius:6px;color:#FBF6EC;font-size:18px;font-weight:600;cursor:pointer">Apply to {{ selCount }} items</div>
+                <div onClick="{{ closeAdjust }}" style="height:48px;display:flex;align-items:center;justify-content:center;border:1px solid #D4A32C;border-radius:6px;color:#0E5C34;font-size:17px;font-weight:600;cursor:pointer">Cancel</div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+
+    <div id="8b" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:13px;font-weight:700;letter-spacing:.14em;color:#FBF6EC;background:#0E5C34;padding:5px 10px;border-radius:4px">8b</span>
+        <span style="font-size:17px;font-weight:600;color:#1E1B16">Item editor — 375px</span>
+        <span style="font-size:15px;color:#6E6455">live: toggle variants, availability, featured</span>
+      </div>
+
+      <div style="position:relative;width:375px;height:812px;background:#FBF6EC;border:1px solid #D8CBAF;box-shadow:0 18px 44px rgba(30,27,22,.13);overflow:hidden">
+
+        <div style="position:absolute;top:0;left:0;right:0;z-index:20">
+          <div style="background:#0E5C34;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+                <div style="width:11px;height:11px;border-left:2.5px solid #FBF6EC;border-bottom:2.5px solid #FBF6EC;transform:rotate(45deg)"></div>
+              </div>
+              <div style="font-size:17px;font-weight:600;color:#FBF6EC">Edit item</div>
+            </div>
+            <div style="height:44px;display:flex;align-items:center;padding:0 18px;border-radius:6px;background:#FBF6EC;font-size:16px;font-weight:700;color:#0E5C34;cursor:pointer">Save</div>
+          </div>
+          <div style="height:8px;background-color:#083D22;background-image:linear-gradient(135deg,#D4A32C 25%,transparent 25%,transparent 75%,#D4A32C 75%),linear-gradient(45deg,#B5562A 25%,transparent 25%,transparent 75%,#B5562A 75%);background-size:16px 16px;background-position:0 0,8px 0"></div>
+        </div>
+
+        <div style="position:absolute;top:70px;left:0;right:0;bottom:86px;overflow-y:auto;padding:16px 16px 24px;display:flex;flex-direction:column;gap:18px">
+
+          <div style="flex:0 0 auto;display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:baseline;gap:8px">
+              <label style="font-size:15px;font-weight:600;color:#1E1B16">Photo</label>
+              <span style="font-size:14px;color:#6E6455">Optional</span>
+            </div>
+            <div style="height:150px;background:#FFFDF8;border:1.5px dashed #C9BCA0;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;cursor:pointer">
+              <div style="position:relative;width:38px;height:28px;border:2px solid #6E6455;border-radius:4px;display:flex;align-items:center;justify-content:center">
+                <div style="position:absolute;top:-6px;left:11px;width:14px;height:5px;border:2px solid #6E6455;border-bottom:none;border-radius:3px 3px 0 0;background:#FFFDF8"></div>
+                <div style="width:12px;height:12px;border:2px solid #6E6455;border-radius:50%"></div>
+              </div>
+              <div style="font-size:16px;font-weight:600;color:#1E1B16">Take photo or upload</div>
+              <div style="font-size:14px;color:#6E6455">JPG or PNG, up to 5 MB</div>
+            </div>
+          </div>
+
+          <div style="flex:0 0 auto;display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:baseline;gap:8px">
+              <label style="font-size:15px;font-weight:600;color:#1E1B16">Item name</label>
+              <span style="font-size:14px;color:#B7202B;font-weight:600">Required</span>
+            </div>
+            <div style="height:52px;background:#FFFDF8;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 14px">
+              <span style="font-size:17px;color:#1E1B16">{{ itemName }}</span>
+            </div>
+          </div>
+
+          <div style="flex:0 0 auto;display:flex;flex-direction:column;gap:7px">
+            <label style="font-size:15px;font-weight:600;color:#1E1B16">Category</label>
+            <div onClick="{{ openCatSheet }}" style="height:52px;background:#FFFDF8;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;cursor:pointer">
+              <span style="font-size:17px;color:#1E1B16">{{ itemCat }}</span>
+              <div style="width:9px;height:9px;border-right:2px solid #6E6455;border-bottom:2px solid #6E6455;transform:rotate(45deg);margin-top:-4px"></div>
+            </div>
+          </div>
+
+          <div style="flex:0 0 auto;display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+              <label style="font-size:15px;font-weight:600;color:#1E1B16">Description</label>
+              <span style="font-size:14px;color:#6E6455">Optional — leave blank for drinks</span>
+            </div>
+            <div style="min-height:76px;background:#FFFDF8;border:1px solid #C9BCA0;border-radius:6px;padding:12px 14px">
+              <span style="font-size:16px;line-height:1.5;color:#1E1B16">{{ itemDesc }}</span>
+            </div>
+          </div>
+
+          <div style="flex:0 0 auto;height:1px;background:#E4D8BC"></div>
+
+          <div style="flex:0 0 auto;display:flex;flex-direction:column;gap:12px">
+            <div style="font-size:15px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6E6455">Price</div>
+
+            <sc-if value="{{ singlePrice }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;flex-direction:column;gap:7px">
+                  <label style="font-size:15px;font-weight:600;color:#1E1B16">Price</label>
+                  <div style="height:56px;background:#FFFDF8;border:2px solid #0E5C34;border-radius:6px;display:flex;align-items:center;gap:6px;padding:0 14px">
+                    <span style="font-size:19px;font-weight:600;color:#6E6455">₦</span>
+                    <span style="font-size:20px;font-weight:700;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">13,000</span>
+                    <span style="width:2px;height:22px;background:#0E5C34"></span>
+                  </div>
+                </div>
+                <div onClick="{{ addVariants }}" style="align-self:flex-start;height:48px;display:flex;align-items:center;gap:9px;padding:0 4px;font-size:16px;font-weight:600;color:#0E5C34;cursor:pointer">
+                  <span style="position:relative;width:16px;height:16px;display:block">
+                    <span style="position:absolute;top:7px;left:0;width:16px;height:2px;background:#0E5C34;display:block"></span>
+                    <span style="position:absolute;left:7px;top:0;width:2px;height:16px;background:#0E5C34;display:block"></span>
+                  </span>Add size or variant
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ hasVariants }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                  <div style="font-size:15px;color:#6E6455">Three sizes · shown as sub-rows on the menu</div>
+                  <div onClick="{{ removeVariants }}" style="font-size:15px;font-weight:600;color:#B5562A;cursor:pointer">Single price</div>
+                </div>
+                <sc-for list="{{ variants }}" as="v" hint-placeholder-count="3">
+                  <div style="flex:0 0 auto;background:#FFFDF8;border:1px solid #E0CD98;border-radius:6px;display:flex;align-items:center;gap:8px;padding:8px 6px 8px 0">
+                    <div style="flex:0 0 40px;width:40px;height:52px;display:flex;align-items:center;justify-content:center;cursor:grab">
+                      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+                        <div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div><div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div>
+                        <div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div><div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div>
+                        <div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div><div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div>
+                      </div>
+                    </div>
+                    <div style="flex:1;min-width:0;height:52px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 12px">
+                      <span style="font-size:16px;color:#1E1B16">{{ v.label }}</span>
+                    </div>
+                    <div style="flex:0 0 112px;height:52px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;gap:4px;padding:0 10px">
+                      <span style="font-size:16px;color:#6E6455">₦</span>
+                      <span style="font-size:17px;font-weight:700;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">{{ v.price }}</span>
+                    </div>
+                    <div style="flex:0 0 40px;width:40px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+                      <div style="width:18px;height:2px;background:#B7202B"></div>
+                    </div>
+                  </div>
+                </sc-for>
+                <div style="align-self:flex-start;height:48px;display:flex;align-items:center;gap:9px;padding:0 4px;font-size:16px;font-weight:600;color:#0E5C34;cursor:pointer">
+                  <span style="position:relative;width:16px;height:16px;display:block">
+                    <span style="position:absolute;top:7px;left:0;width:16px;height:2px;background:#0E5C34;display:block"></span>
+                    <span style="position:absolute;left:7px;top:0;width:2px;height:16px;background:#0E5C34;display:block"></span>
+                  </span>Add another size
+                </div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="flex:0 0 auto;height:1px;background:#E4D8BC"></div>
+
+          <div style="flex:0 0 auto;display:flex;flex-direction:column;gap:10px">
+            <div style="background:#FFFDF8;border:1px solid #E0CD98;border-radius:6px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+              <div style="flex:1;display:flex;flex-direction:column;gap:3px">
+                <div style="font-size:17px;font-weight:600;color:#1E1B16">{{ availLabel }}</div>
+                <div style="font-size:14px;color:#6E6455">Shows on the public menu</div>
+              </div>
+              <div onClick="{{ toggleAvail }}" style="flex:0 0 56px;width:56px;height:32px;border-radius:16px;background:{{ availBg }};position:relative;cursor:pointer">
+                <div style="position:absolute;top:3px;left:{{ availKnob }};width:26px;height:26px;border-radius:50%;background:#FFFDF8;box-shadow:0 1px 3px rgba(30,27,22,.3)"></div>
+              </div>
+            </div>
+            <sc-if value="{{ isFinished }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:11px;align-items:flex-start;background:rgba(183,32,43,.06);border:1px solid #B7202B;border-radius:6px;padding:12px 14px">
+                <div style="flex:0 0 18px;width:18px;height:18px;border-radius:50%;background:#B7202B;color:#FBF6EC;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px">!</div>
+                <div style="font-size:15px;line-height:1.5;color:#8E1A22">This item will show as finished on the public menu.</div>
+              </div>
+            </sc-if>
+            <div style="background:#FFFDF8;border:1px solid #E0CD98;border-radius:6px;padding:14px 16px;display:flex;align-items:center;gap:14px">
+              <div style="flex:1;display:flex;flex-direction:column;gap:3px">
+                <div style="font-size:17px;font-weight:600;color:#1E1B16">Show in Signature Dishes</div>
+                <div style="font-size:14px;color:#6E6455">Photo card on the food menu and homepage</div>
+              </div>
+              <div onClick="{{ toggleFeat }}" style="flex:0 0 56px;width:56px;height:32px;border-radius:16px;background:{{ featBg }};position:relative;cursor:pointer">
+                <div style="position:absolute;top:3px;left:{{ featKnob }};width:26px;height:26px;border-radius:50%;background:#FFFDF8;box-shadow:0 1px 3px rgba(30,27,22,.3)"></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex:0 0 auto;height:1px;background:#E4D8BC;margin-top:8px"></div>
+
+          <div onClick="{{ openDelete }}" style="flex:0 0 auto;height:56px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;color:#B7202B;cursor:pointer">Delete this item</div>
+        </div>
+
+        <div style="position:absolute;left:0;right:0;bottom:0;z-index:20;background:#FFFDF8;border-top:1px solid #D4A32C;padding:14px 16px 16px">
+          <div style="height:56px;display:flex;align-items:center;justify-content:center;background:#0E5C34;border-radius:6px;color:#FBF6EC;font-size:18px;font-weight:600;cursor:pointer">Save Changes</div>
+        </div>
+
+        <sc-if value="{{ catSheetOn }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:40;background:rgba(30,27,22,.45)">
+            <div onClick="{{ closeSheets }}" style="position:absolute;inset:0"></div>
+            <div style="position:absolute;left:0;right:0;bottom:0;max-height:70%;background:#FFFDF8;border-top:1px solid #D4A32C;border-radius:12px 12px 0 0;padding:18px 0 20px;display:flex;flex-direction:column;gap:12px">
+              <div style="flex:0 0 auto;width:44px;height:4px;border-radius:2px;background:#D8CBAF;align-self:center"></div>
+              <div style="flex:0 0 auto;font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#1E1B16;padding:0 18px">Choose category</div>
+              <div style="flex:1;min-height:0;overflow-y:auto;padding:0 18px">
+                <sc-for list="{{ catOptions }}" as="c" hint-placeholder-count="5">
+                  <div onClick="{{ c.pick }}" style="min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #F0E6CF;cursor:pointer">
+                    <span style="font-size:17px;font-weight:{{ c.weight }};color:#1E1B16">{{ c.name }}</span>
+                    <div style="width:22px;height:22px;display:flex;align-items:center;justify-content:center;opacity:{{ c.tick }}">
+                      <div style="width:12px;height:7px;border-left:2.5px solid #0E5C34;border-bottom:2.5px solid #0E5C34;transform:rotate(-45deg) translate(1px,-2px)"></div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ delSheetOn }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:40;background:rgba(30,27,22,.45)">
+            <div onClick="{{ closeSheets }}" style="position:absolute;inset:0"></div>
+            <div style="position:absolute;left:0;right:0;bottom:0;background:#FFFDF8;border-top:2px solid #B7202B;border-radius:12px 12px 0 0;padding:18px 18px 22px;display:flex;flex-direction:column;gap:14px">
+              <div style="width:44px;height:4px;border-radius:2px;background:#D8CBAF;align-self:center"></div>
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:#B7202B;color:#FBF6EC;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center">!</div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="font-family:'Playfair Display',serif;font-size:23px;font-weight:700;color:#1E1B16;line-height:1.2">Delete “{{ itemName }}”?</div>
+                  <div style="font-size:16px;line-height:1.55;color:#6E6455">It will be removed from the public menu straight away. This cannot be undone.</div>
+                </div>
+              </div>
+              <div style="height:56px;display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid #B5562A;border-radius:6px;color:#B5562A;font-size:17px;font-weight:600;cursor:pointer">Mark finished instead</div>
+              <div style="height:56px;display:flex;align-items:center;justify-content:center;background:#B7202B;border-radius:6px;color:#FBF6EC;font-size:17px;font-weight:600;cursor:pointer">Delete item</div>
+              <div onClick="{{ closeSheets }}" style="height:48px;display:flex;align-items:center;justify-content:center;border:1px solid #D4A32C;border-radius:6px;color:#0E5C34;font-size:17px;font-weight:600;cursor:pointer">Cancel</div>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+
+    <div id="8c" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:13px;font-weight:700;letter-spacing:.14em;color:#FBF6EC;background:#0E5C34;padding:5px 10px;border-radius:4px">8c</span>
+        <span style="font-size:17px;font-weight:600;color:#1E1B16">Settings — 375px</span>
+        <span style="font-size:15px;color:#6E6455">live: tap a section to expand</span>
+      </div>
+
+      <div style="position:relative;width:375px;height:812px;background:#FBF6EC;border:1px solid #D8CBAF;box-shadow:0 18px 44px rgba(30,27,22,.13);overflow:hidden">
+
+        <div style="position:absolute;top:0;left:0;right:0;z-index:20">
+          <div style="background:#0E5C34;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="background:#FFFDF8;border-radius:4px;padding:3px 5px;display:flex">
+                <img src="assets/nupwb-logo.jpeg" alt="NUPWB" style="height:32px;width:auto;display:block;mix-blend-mode:multiply">
+              </div>
+              <div style="font-size:17px;font-weight:600;color:#FBF6EC">Settings</div>
+            </div>
+            <div style="width:44px;height:44px;border-radius:50%;background:#FBF6EC;border:1px solid #D4A32C;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#0E5C34">TO</div>
+          </div>
+          <div style="height:8px;background-color:#083D22;background-image:linear-gradient(135deg,#D4A32C 25%,transparent 25%,transparent 75%,#D4A32C 75%),linear-gradient(45deg,#B5562A 25%,transparent 25%,transparent 75%,#B5562A 75%);background-size:16px 16px;background-position:0 0,8px 0"></div>
+        </div>
+
+        <div style="position:absolute;top:70px;left:0;right:0;bottom:78px;overflow-y:auto;padding:14px 14px 22px;display:flex;flex-direction:column;gap:10px">
+
+          <div style="flex:0 0 auto;background:#FFFDF8;border:1px solid #E0CD98;border-radius:6px;overflow:hidden">
+            <div onClick="{{ openVenue }}" style="min-height:60px;display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer">
+              <div style="flex:1;font-size:17px;font-weight:600;color:#1E1B16">Venue details</div>
+              <div style="width:9px;height:9px;border-right:2px solid #6E6455;border-bottom:2px solid #6E6455;transform:rotate({{ venueArrow }});margin-top:-3px"></div>
+            </div>
+            <sc-if value="{{ venueOpen }}" hint-placeholder-val="{{ true }}">
+              <div style="border-top:1px solid #F0E6CF;padding:14px 16px 18px;display:flex;flex-direction:column;gap:14px">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:15px;font-weight:600;color:#1E1B16">Venue name</label>
+                  <div style="height:50px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 13px;font-size:16px;color:#1E1B16">Nwoke Udi Palm Wine Bar</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:15px;font-weight:600;color:#1E1B16">Tagline</label>
+                  <div style="height:50px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 13px;font-size:16px;color:#1E1B16">Nnọọ — the home of fresh palm wine</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:15px;font-weight:600;color:#1E1B16">Address</label>
+                  <div style="min-height:70px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;padding:11px 13px;font-size:16px;line-height:1.5;color:#1E1B16">14 Ogui Road, Enugu<br>Enugu State, Nigeria</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:15px;font-weight:600;color:#1E1B16">Phone</label>
+                  <div style="height:50px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 13px;font-size:16px;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">+234 803 456 7891</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:15px;font-weight:600;color:#1E1B16">WhatsApp number</label>
+                  <div style="height:50px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 13px;font-size:16px;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">+234 803 456 7891</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:15px;font-weight:600;color:#1E1B16">Email</label>
+                  <div style="height:50px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 13px;font-size:16px;color:#1E1B16">hello@nupwb.ng</div>
+                </div>
+                <div style="height:52px;display:flex;align-items:center;justify-content:center;background:#0E5C34;border-radius:6px;color:#FBF6EC;font-size:17px;font-weight:600;cursor:pointer">Save venue details</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="flex:0 0 auto;background:#FFFDF8;border:1px solid #E0CD98;border-radius:6px;overflow:hidden">
+            <div onClick="{{ openHours }}" style="min-height:60px;display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer">
+              <div style="flex:1;font-size:17px;font-weight:600;color:#1E1B16">Opening hours</div>
+              <div style="font-size:15px;color:#6E6455">Daily 12:00</div>
+              <div style="width:9px;height:9px;border-right:2px solid #6E6455;border-bottom:2px solid #6E6455;transform:rotate({{ hoursArrow }});margin-top:-3px"></div>
+            </div>
+            <sc-if value="{{ hoursOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="border-top:1px solid #F0E6CF;padding:8px 16px 16px">
+                <sc-for list="{{ days }}" as="d" hint-placeholder-count="7">
+                  <div style="display:flex;align-items:center;gap:8px;min-height:64px;padding:8px 0;border-bottom:1px solid #F0E6CF">
+                    <div style="flex:0 0 76px;font-size:16px;font-weight:600;color:#1E1B16">{{ d.short }}</div>
+                    <div style="flex:1;display:flex;align-items:center;gap:6px;opacity:{{ d.dim }}">
+                      <div style="flex:1;height:48px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">{{ d.open }}</div>
+                      <div style="font-size:15px;color:#6E6455">—</div>
+                      <div style="flex:1;height:48px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">{{ d.close }}</div>
+                    </div>
+                    <div onClick="{{ d.toggle }}" style="flex:0 0 48px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+                      <div style="width:44px;height:26px;border-radius:13px;background:{{ d.switchBg }};position:relative">
+                        <div style="position:absolute;top:3px;left:{{ d.knob }};width:20px;height:20px;border-radius:50%;background:#FFFDF8;box-shadow:0 1px 3px rgba(30,27,22,.3)"></div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-for>
+                <div style="font-size:14px;color:#6E6455;padding:10px 0 12px">Toggle off to mark a day closed.</div>
+                <div style="height:52px;display:flex;align-items:center;justify-content:center;background:#0E5C34;border-radius:6px;color:#FBF6EC;font-size:17px;font-weight:600;cursor:pointer">Save hours</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="flex:0 0 auto;background:#FFFDF8;border:1px solid #E0CD98;border-radius:6px;overflow:hidden">
+            <div onClick="{{ openMap }}" style="min-height:60px;display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer">
+              <div style="flex:1;font-size:17px;font-weight:600;color:#1E1B16">Map location</div>
+              <div style="width:9px;height:9px;border-right:2px solid #6E6455;border-bottom:2px solid #6E6455;transform:rotate({{ mapArrow }});margin-top:-3px"></div>
+            </div>
+            <sc-if value="{{ mapOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="border-top:1px solid #F0E6CF;padding:14px 16px 18px;display:flex;flex-direction:column;gap:14px">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:15px;font-weight:600;color:#1E1B16">Google Maps link or coordinates</label>
+                  <div style="min-height:50px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:11px 13px;font-size:15px;color:#1E1B16;word-break:break-all">6.4402, 7.4996</div>
+                </div>
+                <div style="height:140px;border:1px solid #D4A32C;border-radius:6px;background:#EFE7D6;display:flex;align-items:center;justify-content:center;gap:9px">
+                  <div style="width:16px;height:16px;background:#B5562A;border-radius:50% 50% 50% 0;transform:rotate(-45deg)"></div>
+                  <div style="font-size:15px;color:#6E6455">Map preview</div>
+                </div>
+                <div style="height:52px;display:flex;align-items:center;justify-content:center;background:#0E5C34;border-radius:6px;color:#FBF6EC;font-size:17px;font-weight:600;cursor:pointer">Save location</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="flex:0 0 auto;background:#FFFDF8;border:1px solid #E0CD98;border-radius:6px;overflow:hidden">
+            <div onClick="{{ openSocial }}" style="min-height:60px;display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer">
+              <div style="flex:1;font-size:17px;font-weight:600;color:#1E1B16">Social links</div>
+              <div style="font-size:15px;color:#6E6455">None set</div>
+              <div style="width:9px;height:9px;border-right:2px solid #6E6455;border-bottom:2px solid #6E6455;transform:rotate({{ socialArrow }});margin-top:-3px"></div>
+            </div>
+            <sc-if value="{{ socialOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="border-top:1px solid #F0E6CF;padding:14px 16px 18px;display:flex;flex-direction:column;gap:14px">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:15px;font-weight:600;color:#1E1B16">Instagram</label>
+                  <div style="height:50px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 13px;font-size:16px;color:#6E6455">instagram.com/…</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:15px;font-weight:600;color:#1E1B16">Facebook</label>
+                  <div style="height:50px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 13px;font-size:16px;color:#6E6455">facebook.com/…</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:15px;font-weight:600;color:#1E1B16">TikTok</label>
+                  <div style="height:50px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 13px;font-size:16px;color:#6E6455">tiktok.com/@…</div>
+                </div>
+                <div style="height:52px;display:flex;align-items:center;justify-content:center;background:#0E5C34;border-radius:6px;color:#FBF6EC;font-size:17px;font-weight:600;cursor:pointer">Save links</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="flex:0 0 auto;background:#FFFDF8;border:1px solid #E0CD98;border-radius:6px;overflow:hidden">
+            <div onClick="{{ openQr }}" style="min-height:60px;display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer">
+              <div style="flex:1;font-size:17px;font-weight:600;color:#1E1B16">Menu link &amp; QR</div>
+              <div style="width:9px;height:9px;border-right:2px solid #6E6455;border-bottom:2px solid #6E6455;transform:rotate({{ qrArrow }});margin-top:-3px"></div>
+            </div>
+            <sc-if value="{{ qrOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="border-top:1px solid #F0E6CF;padding:14px 16px 18px;display:flex;flex-direction:column;gap:14px">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-size:15px;font-weight:600;color:#1E1B16">Public menu link</label>
+                  <div style="display:flex;gap:8px">
+                    <div style="flex:1;height:50px;background:#FBF6EC;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 13px;font-size:16px;color:#1E1B16;min-width:0">nupwb.ng/nwoke-udi</div>
+                    <div onClick="{{ copyLink }}" style="flex:0 0 auto;height:50px;display:flex;align-items:center;padding:0 16px;border:1px solid {{ copyBorder }};border-radius:6px;font-size:15px;font-weight:600;color:{{ copyColor }};cursor:pointer">{{ copyLabel }}</div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:14px;align-items:center">
+                  <div style="flex:0 0 96px;width:96px;height:96px;background:#FFFFFF;border:1px solid #D4A32C;position:relative;padding:9px;box-sizing:border-box">
+                    <div style="position:absolute;inset:9px;background-image:radial-gradient(#0E5C34 0 1.6px,transparent 1.9px);background-size:8px 8px;opacity:.7"></div>
+                    <div style="position:absolute;top:11px;left:11px;width:20px;height:20px;border:4px solid #0E5C34;background:#FFFFFF"></div>
+                    <div style="position:absolute;top:11px;right:11px;width:20px;height:20px;border:4px solid #0E5C34;background:#FFFFFF"></div>
+                    <div style="position:absolute;bottom:11px;left:11px;width:20px;height:20px;border:4px solid #0E5C34;background:#FFFFFF"></div>
+                  </div>
+                  <div style="flex:1;font-size:15px;line-height:1.55;color:#6E6455">Your QR code never changes, even when you edit prices. Printed tents stay valid.</div>
+                </div>
+                <div style="height:52px;display:flex;align-items:center;justify-content:center;border:1px solid #D4A32C;border-radius:6px;color:#0E5C34;font-size:17px;font-weight:600;cursor:pointer">Download Print Assets</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="flex:0 0 auto;background:#FFFDF8;border:1px solid #E0CD98;border-radius:6px;overflow:hidden">
+            <div onClick="{{ openAccount }}" style="min-height:60px;display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer">
+              <div style="flex:1;font-size:17px;font-weight:600;color:#1E1B16">Account</div>
+              <div style="font-size:15px;color:#6E6455">timothy@nupwb.ng</div>
+              <div style="width:9px;height:9px;border-right:2px solid #6E6455;border-bottom:2px solid #6E6455;transform:rotate({{ accountArrow }});margin-top:-3px"></div>
+            </div>
+            <sc-if value="{{ accountOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="border-top:1px solid #F0E6CF;padding:14px 16px 18px;display:flex;flex-direction:column;gap:12px">
+                <div style="height:52px;display:flex;align-items:center;justify-content:center;border:1px solid #D4A32C;border-radius:6px;color:#0E5C34;font-size:17px;font-weight:600;cursor:pointer">Change password</div>
+                <div style="height:56px;display:flex;align-items:center;justify-content:center;border:1px solid #B7202B;border-radius:6px;color:#B7202B;font-size:17px;font-weight:600;cursor:pointer">Sign out</div>
+              </div>
+            </sc-if>
+          </div>
+
+        </div>
+
+        <div style="position:absolute;left:0;right:0;bottom:0;z-index:20;background:#FFFDF8;border-top:1px solid #D4A32C;display:grid;grid-template-columns:repeat(4,1fr);height:78px">
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">
+            <div style="width:18px;height:18px;border-radius:3px;border:2px solid #6E6455"></div>
+            <div style="font-size:13px;font-weight:500;color:#6E6455">Dashboard</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">
+            <div style="width:18px;height:18px;border-radius:3px;border:2px solid #6E6455"></div>
+            <div style="font-size:13px;font-weight:500;color:#6E6455">Menu</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">
+            <div style="width:18px;height:18px;border-radius:2px;border:2px solid #6E6455"></div>
+            <div style="font-size:13px;font-weight:500;color:#6E6455">QR</div>
+          </div>
+          <div style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">
+            <div style="position:absolute;top:0;left:14px;right:14px;height:3px;background:#D4A32C"></div>
+            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #0E5C34;background:rgba(212,163,44,.35)"></div>
+            <div style="font-size:13px;font-weight:700;color:#0E5C34">Settings</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="8d" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:13px;font-weight:700;letter-spacing:.14em;color:#FBF6EC;background:#0E5C34;padding:5px 10px;border-radius:4px">8d</span>
+        <span style="font-size:17px;font-weight:600;color:#1E1B16">Close-ups</span>
+        <span style="font-size:15px;color:#6E6455">inline edit · variant editor · bulk sheet</span>
+      </div>
+
+      <div style="width:760px;background:#FFFDF8;border:1px solid #D8CBAF;box-shadow:0 18px 44px rgba(30,27,22,.13);padding:32px;display:flex;flex-direction:column;gap:32px">
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#1E1B16">Inline price edit</div>
+            <div style="height:1px;flex:1;background:#E4D8BC"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="font-size:15px;color:#6E6455">Resting row</div>
+              <div style="background:#FBF6EC;border:1px solid #E0CD98;border-radius:6px;display:flex;align-items:center;gap:11px;min-height:70px;padding:0 8px 0 10px">
+                <div style="flex:0 0 48px;width:48px;height:48px;border-radius:5px;background:#EFE7D6;border:1px solid #E0CD98;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:#B5562A">S</div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:3px">
+                  <div style="font-size:16px;font-weight:600;color:#1E1B16">Star</div>
+                  <div style="font-size:14px;color:#6E6455">Beer &amp; Alcoholic</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+                  <span style="font-size:17px;font-weight:700;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">₦1,400</span>
+                  <span style="font-size:12px;font-weight:600;color:#B5562A">tap to edit</span>
+                </div>
+                <div style="width:36px;height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+                  <div style="width:4px;height:4px;border-radius:50%;background:#6E6455"></div>
+                  <div style="width:4px;height:4px;border-radius:50%;background:#6E6455"></div>
+                  <div style="width:4px;height:4px;border-radius:50%;background:#6E6455"></div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="font-size:15px;color:#6E6455">Editing</div>
+              <div style="background:#FBF6EC;border:1px solid #0E5C34;border-radius:6px;display:flex;align-items:center;gap:10px;min-height:70px;padding:0 8px 0 10px">
+                <div style="flex:0 0 48px;width:48px;height:48px;border-radius:5px;background:#EFE7D6;border:1px solid #E0CD98;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:#B5562A">S</div>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
+                  <div style="font-size:16px;font-weight:600;color:#1E1B16">Star</div>
+                  <div style="font-size:14px;color:#6E6455">was ₦1,400</div>
+                </div>
+                <div style="height:44px;min-width:92px;background:#FFFDF8;border:2px solid #0E5C34;border-radius:6px;display:flex;align-items:center;gap:2px;padding:0 10px">
+                  <span style="font-size:17px;font-weight:600;color:#6E6455">₦</span>
+                  <span style="font-size:18px;font-weight:700;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">1,500</span>
+                  <span style="width:2px;height:20px;background:#0E5C34"></span>
+                </div>
+                <div style="width:44px;height:44px;border-radius:6px;background:#0E5C34;display:flex;align-items:center;justify-content:center">
+                  <div style="width:12px;height:7px;border-left:2.5px solid #FBF6EC;border-bottom:2.5px solid #FBF6EC;transform:rotate(-45deg) translate(1px,-2px)"></div>
+                </div>
+                <div style="width:44px;height:44px;border-radius:6px;border:1px solid #C9BCA0;display:flex;align-items:center;justify-content:center;font-size:20px;color:#6E6455">×</div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:16px;line-height:1.6;color:#6E6455">A price change is the most frequent admin action, so it never costs a navigation. Tap the figure, a numeric keypad docks over the tab bar, the rest of the list drops to 42% so the edited row is unmistakable, and the old value stays visible as “was ₦1,400” until save. The keypad carries a 00 key — every price on this menu ends in two zeros.</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#1E1B16">Single price → variants</div>
+            <div style="height:1px;flex:1;background:#E4D8BC"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1.25fr;gap:20px;align-items:start">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:15px;color:#6E6455">Default</div>
+              <div style="height:56px;background:#FBF6EC;border:2px solid #0E5C34;border-radius:6px;display:flex;align-items:center;gap:6px;padding:0 14px">
+                <span style="font-size:19px;font-weight:600;color:#6E6455">₦</span>
+                <span style="font-size:20px;font-weight:700;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">13,000</span>
+              </div>
+              <div style="height:48px;display:flex;align-items:center;gap:9px;font-size:16px;font-weight:600;color:#0E5C34">
+                <span style="position:relative;width:16px;height:16px;display:block">
+                  <span style="position:absolute;top:7px;left:0;width:16px;height:2px;background:#0E5C34;display:block"></span>
+                  <span style="position:absolute;left:7px;top:0;width:2px;height:16px;background:#0E5C34;display:block"></span>
+                </span>Add size or variant
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:15px;color:#6E6455">After — Barbecue Fish</div>
+              <div style="background:#FBF6EC;border:1px solid #E0CD98;border-radius:6px;display:flex;align-items:center;gap:8px;padding:8px 6px 8px 0">
+                <div style="flex:0 0 40px;width:40px;height:52px;display:flex;align-items:center;justify-content:center">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+                    <div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div><div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div>
+                    <div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div><div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div>
+                    <div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div><div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div>
+                  </div>
+                </div>
+                <div style="flex:1;height:52px;background:#FFFDF8;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 12px;font-size:16px;color:#1E1B16">Small</div>
+                <div style="flex:0 0 112px;height:52px;background:#FFFDF8;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;gap:4px;padding:0 10px"><span style="font-size:16px;color:#6E6455">₦</span><span style="font-size:17px;font-weight:700;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">13,000</span></div>
+                <div style="flex:0 0 40px;width:40px;height:52px;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:2px;background:#B7202B"></div></div>
+              </div>
+              <div style="background:#FBF6EC;border:1px solid #E0CD98;border-radius:6px;display:flex;align-items:center;gap:8px;padding:8px 6px 8px 0">
+                <div style="flex:0 0 40px;width:40px;height:52px;display:flex;align-items:center;justify-content:center">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+                    <div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div><div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div>
+                    <div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div><div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div>
+                    <div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div><div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div>
+                  </div>
+                </div>
+                <div style="flex:1;height:52px;background:#FFFDF8;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 12px;font-size:16px;color:#1E1B16">Medium</div>
+                <div style="flex:0 0 112px;height:52px;background:#FFFDF8;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;gap:4px;padding:0 10px"><span style="font-size:16px;color:#6E6455">₦</span><span style="font-size:17px;font-weight:700;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">15,000</span></div>
+                <div style="flex:0 0 40px;width:40px;height:52px;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:2px;background:#B7202B"></div></div>
+              </div>
+              <div style="background:#FBF6EC;border:1px solid #E0CD98;border-radius:6px;display:flex;align-items:center;gap:8px;padding:8px 6px 8px 0">
+                <div style="flex:0 0 40px;width:40px;height:52px;display:flex;align-items:center;justify-content:center">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+                    <div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div><div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div>
+                    <div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div><div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div>
+                    <div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div><div style="width:4px;height:4px;border-radius:50%;background:#C9BCA0"></div>
+                  </div>
+                </div>
+                <div style="flex:1;height:52px;background:#FFFDF8;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;padding:0 12px;font-size:16px;color:#1E1B16">Large</div>
+                <div style="flex:0 0 112px;height:52px;background:#FFFDF8;border:1px solid #C9BCA0;border-radius:6px;display:flex;align-items:center;gap:4px;padding:0 10px"><span style="font-size:16px;color:#6E6455">₦</span><span style="font-size:17px;font-weight:700;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">16,000</span></div>
+                <div style="flex:0 0 40px;width:40px;height:52px;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:2px;background:#B7202B"></div></div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:16px;line-height:1.6;color:#6E6455">Adding the first variant absorbs the single price into row one, so nothing is retyped. Rows carry a 40px grip and a 40px remove target. Removing every variant but one collapses back to the single-price field — the two states are the same data, not two different forms.</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#1E1B16">Bulk price adjust</div>
+            <div style="height:1px;flex:1;background:#E4D8BC"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:start">
+            <div style="background:#FBF6EC;border:1px solid #E0CD98;border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;gap:10px">
+                <div style="flex:1;height:48px;display:flex;align-items:center;justify-content:center;border:2px solid #0E5C34;background:rgba(14,92,52,.08);border-radius:6px;font-size:16px;font-weight:700;color:#0E5C34">+ Increase</div>
+                <div style="flex:1;height:48px;display:flex;align-items:center;justify-content:center;border:1px solid #C9BCA0;border-radius:6px;font-size:16px;font-weight:700;color:#6E6455">− Decrease</div>
+              </div>
+              <div style="display:flex;gap:10px">
+                <div style="flex:1;height:50px;background:#FFFDF8;border:2px solid #0E5C34;border-radius:6px;display:flex;align-items:center;gap:4px;padding:0 12px"><span style="font-size:16px;color:#6E6455">₦</span><span style="font-size:17px;font-weight:700;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">50</span></div>
+                <div style="flex:0 0 120px;display:flex;background:#EFE7D6;border:1px solid #D8CBAF;border-radius:8px;padding:3px">
+                  <div style="flex:1;height:42px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#FFFDF8;font-size:16px;font-weight:700;color:#0E5C34">₦</div>
+                  <div style="flex:1;height:42px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:16px;font-weight:700;color:#6E6455">%</div>
+                </div>
+              </div>
+              <div style="background:#FFFDF8;border:1px solid #E0CD98;border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:3px">
+                <div style="font-size:14px;color:#6E6455">Preview</div>
+                <div style="font-size:16px;color:#1E1B16;font-variant-numeric:tabular-nums lining-nums">32 items · average ₦1,380 → ₦1,430</div>
+              </div>
+            </div>
+            <div style="font-size:16px;line-height:1.6;color:#6E6455">A brewery price rise moves thirty-odd beers at once, so bulk adjust is the second workflow after inline edit. Direction and unit are separate controls rather than a signed number — “−10%” typed wrong is a real cost. The preview line recomputes on every keystroke and states the item count, so the manager confirms the blast radius before applying, and the apply button repeats the count rather than saying “Apply”.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showAdminNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;}}">
+const NG = (n) => "₦" + n.toLocaleString("en-NG");
+const DATA = {
+  Drinks: [
+    { name: "Akulu Pammy", cat: "Palm Wine", price: 6000 },
+    { name: "Soft Pammy", cat: "Palm Wine", price: 5000 },
+    { name: "Star", cat: "Beer & Alcoholic", price: 1400 },
+    { name: "Heineken", cat: "Beer & Alcoholic", price: 1500, from: true },
+    { name: "Gulder", cat: "Beer & Alcoholic", price: 1400, swiped: true },
+    { name: "Legend", cat: "Beer & Alcoholic", price: 1300, from: true },
+    { name: "Water", cat: "Soft Drinks", price: 400 },
+    { name: "Maltina", cat: "Soft Drinks", price: 900 },
+    { name: "Monster", cat: "Soft Drinks", price: 1300 },
+    { name: "Arabian Tea", cat: "Arabian Tea", price: 3500, from: true },
+    { name: "Chapman (Non-Alcoholic)", cat: "Cocktails", price: 0, finished: true },
+    { name: "Benson", cat: "Cigarettes", price: 1200 }
+  ],
+  Food: [
+    { name: "Isi Ewu", cat: "Signature Dishes", price: 12000 },
+    { name: "Nkwobi", cat: "Signature Dishes", price: 4500 },
+    { name: "Abacha with Isi Ewu", cat: "Abacha", price: 13500 },
+    { name: "Abacha with Stock Fish", cat: "Abacha", price: 8500 },
+    { name: "Goat Pepper Soup", cat: "Main Dishes", price: 4500 },
+    { name: "Barbecue Fish", cat: "Grills", price: 13000, from: true },
+    { name: "Full Native Chicken", cat: "Grills", price: 18000 },
+    { name: "Shisha", cat: "Shisha", price: 0, finished: true }
+  ]
+};
+const CHIPS = {
+  Drinks: ["All", "Palm Wine", "Beer & Alcoholic", "Soft Drinks", "Arabian Tea", "Cocktails", "Cigarettes"],
+  Food: ["All", "Signature Dishes", "Main Dishes", "Abacha", "Grills", "Shisha"]
+};
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      scope: "Drinks", q: "", cat: "All", bulk: false,
+      sel: { Star: true, Gulder: true, Legend: true, Heineken: true },
+      editing: null, draft: "", adjust: false, dir: "up", unit: "₦", adjValue: "50",
+      variants: true, itemCat: "Grills", avail: true, feat: true, sheet: null,
+      section: "venue", closed: {}, copied: false
+    };
+  }
+  openSection(k) { this.setState({ section: this.state.section === k ? null : k }); }
+  rows() {
+    const q = this.state.q.trim().toLowerCase();
+    return DATA[this.state.scope].filter((i) => {
+      if (this.state.cat !== "All" && i.cat !== this.state.cat) return false;
+      return q ? i.name.toLowerCase().includes(q) : true;
+    });
+  }
+  startEdit(it) {
+    this.setState({ editing: it.name, draft: it.price ? String(it.price) : "", bulk: false });
+  }
+  press(k) {
+    const d = this.state.draft;
+    if (k === "⌫") return this.setState({ draft: d.slice(0, -1) });
+    if (k === "00") return this.setState({ draft: d.length && d.length < 7 ? d + "00" : d });
+    this.setState({ draft: d.length < 7 ? d + k : d });
+  }
+  renderVals() {
+    const s = this.state;
+    const drinks = s.scope === "Drinks";
+    const list = this.rows();
+    const editing = s.editing;
+    const editRow = DATA[s.scope].find((i) => i.name === editing);
+    const selNames = Object.keys(s.sel).filter((k) => s.sel[k]);
+    const selCount = selNames.length;
+    const avgFrom = 1380, pct = s.unit === "%";
+    const delta = Number(s.adjValue || 0) * (s.dir === "up" ? 1 : -1);
+    const avgTo = Math.round(pct ? avgFrom * (1 + delta / 100) : avgFrom + delta);
+    const seg = (on) => ({ bg: on ? "#FFFDF8" : "transparent", color: on ? "#0E5C34" : "#6E6455", shadow: on ? "0 1px 3px rgba(30,27,22,.18)" : "none" });
+    const d = seg(drinks), f = seg(!drinks);
+    const bulkOn = s.bulk && !editing;
+    return {
+      q: s.q,
+      onQuery: (e) => this.setState({ q: e.target.value }),
+      pickDrinks: () => this.setState({ scope: "Drinks", cat: "All", editing: null }),
+      pickFood: () => this.setState({ scope: "Food", cat: "All", editing: null }),
+      drinksBg: d.bg, drinksColor: d.color, drinksShadow: d.shadow,
+      foodBg: f.bg, foodColor: f.color, foodShadow: f.shadow,
+      toggleBulk: () => this.setState({ bulk: !s.bulk, editing: null }),
+      bulkBg: bulkOn ? "#0E5C34" : "#FFFDF8",
+      bulkBorder: bulkOn ? "#0E5C34" : "#D4A32C",
+      bulkColor: bulkOn ? "#FBF6EC" : "#0E5C34",
+      bulkOn: bulkOn,
+      bulkBarOn: bulkOn && selCount > 0,
+      tabsOn: !editing && !(bulkOn && selCount > 0),
+      showFab: !editing && !bulkOn,
+      listTop: bulkOn ? "218px" : "218px",
+      listBottom: editing ? "336px" : bulkOn && selCount > 0 ? "146px" : "78px",
+      countLine: list.length + (list.length === 1 ? " item" : " items") + " · " + s.scope.toLowerCase(),
+      chips: CHIPS[s.scope].map((c) => ({
+        label: c, pick: () => this.setState({ cat: c }),
+        bg: s.cat === c ? "#B5562A" : "#FFFDF8",
+        border: s.cat === c ? "#B5562A" : "#D4A32C",
+        color: s.cat === c ? "#FBF6EC" : "#1E1B16"
+      })),
+      items: list.map((i) => {
+        const on = editing === i.name, selected = !!s.sel[i.name];
+        return {
+          name: i.name, cat: i.cat, initial: i.name.charAt(0),
+          finished: !!i.finished,
+          priceText: i.finished && !i.price ? "—" : (i.from ? "from " : "") + NG(i.price),
+          strike: i.finished && i.price ? "line-through" : "none",
+          dim: editing && !on ? 0.42 : i.finished ? 0.62 : 1,
+          border: on ? "#0E5C34" : "#E0CD98",
+          slide: !editing && !bulkOn && i.swiped ? "-96px" : "0px",
+          editing: on, notEditing: !on,
+          startEdit: () => this.startEdit(i),
+          toggleSel: () => this.setState({ sel: Object.assign({}, s.sel, { [i.name]: !selected }) }),
+          boxBorder: selected ? "#0E5C34" : "#C9BCA0",
+          boxFill: selected ? "#0E5C34" : "transparent",
+          tick: selected ? 1 : 0,
+          thumbMargin: bulkOn ? "0px" : "10px"
+        };
+      }),
+      editing: !!editing,
+      editingName: editing || "",
+      editingWas: editRow ? NG(editRow.price) : "",
+      draft: s.draft ? Number(s.draft).toLocaleString("en-NG") : "0",
+      saveEdit: () => this.setState({ editing: null }),
+      cancelEdit: () => this.setState({ editing: null }),
+      keys: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "00", "0", "⌫"].map((k) => ({
+        label: k, press: () => this.press(k),
+        bg: k === "⌫" ? "#E2D7BF" : "#FFFDF8"
+      })),
+      selCount: selCount,
+      clearSel: () => this.setState({ sel: {} }),
+      openAdjust: () => this.setState({ adjust: true }),
+      closeAdjust: () => this.setState({ adjust: false }),
+      adjustOn: s.adjust,
+      setUp: () => this.setState({ dir: "up" }),
+      setDown: () => this.setState({ dir: "down" }),
+      upBorder: s.dir === "up" ? "2px solid #0E5C34" : "1px solid #C9BCA0",
+      upBg: s.dir === "up" ? "rgba(14,92,52,.08)" : "transparent",
+      upColor: s.dir === "up" ? "#0E5C34" : "#6E6455",
+      downBorder: s.dir === "down" ? "2px solid #B5562A" : "1px solid #C9BCA0",
+      downBg: s.dir === "down" ? "rgba(181,86,42,.08)" : "transparent",
+      downColor: s.dir === "down" ? "#B5562A" : "#6E6455",
+      setNaira: () => this.setState({ unit: "₦" }),
+      setPct: () => this.setState({ unit: "%" }),
+      nairaBg: pct ? "transparent" : "#FFFDF8",
+      nairaColor: pct ? "#6E6455" : "#0E5C34",
+      pctBg: pct ? "#FFFDF8" : "transparent",
+      pctColor: pct ? "#0E5C34" : "#6E6455",
+      adjPrefix: pct ? "" : "₦",
+      adjSuffix: pct ? "%" : "",
+      adjValue: s.adjValue,
+      previewLine: selCount + " items · average " + NG(avgFrom) + " → " + NG(avgTo),
+
+      itemName: "Barbecue Fish",
+      itemCat: s.itemCat,
+      itemDesc: "Grilled to order over coals. Ask staff which sizes are on today.",
+      singlePrice: !s.variants,
+      hasVariants: s.variants,
+      addVariants: () => this.setState({ variants: true }),
+      removeVariants: () => this.setState({ variants: false }),
+      variants: [
+        { label: "Small", price: "13,000" },
+        { label: "Medium", price: "15,000" },
+        { label: "Large", price: "16,000" }
+      ],
+      availLabel: s.avail ? "Available" : "Finished",
+      availBg: s.avail ? "#0E5C34" : "#B7202B",
+      availKnob: s.avail ? "27px" : "3px",
+      toggleAvail: () => this.setState({ avail: !s.avail }),
+      isFinished: !s.avail,
+      featBg: s.feat ? "#0E5C34" : "#C9BCA0",
+      featKnob: s.feat ? "27px" : "3px",
+      toggleFeat: () => this.setState({ feat: !s.feat }),
+      openCatSheet: () => this.setState({ sheet: "cat" }),
+      openDelete: () => this.setState({ sheet: "del" }),
+      closeSheets: () => this.setState({ sheet: null }),
+      catSheetOn: s.sheet === "cat",
+      delSheetOn: s.sheet === "del",
+      catOptions: ["Signature Dishes", "Main Dishes", "Abacha", "Grills", "Shisha"].map((c) => ({
+        name: c,
+        pick: () => this.setState({ itemCat: c, sheet: null }),
+        weight: s.itemCat === c ? "700" : "400",
+        tick: s.itemCat === c ? 1 : 0
+      })),
+
+      openVenue: () => this.openSection("venue"),
+      openHours: () => this.openSection("hours"),
+      openMap: () => this.openSection("map"),
+      openSocial: () => this.openSection("social"),
+      openQr: () => this.openSection("qr"),
+      openAccount: () => this.openSection("account"),
+      venueOpen: s.section === "venue", venueArrow: s.section === "venue" ? "-135deg" : "45deg",
+      hoursOpen: s.section === "hours", hoursArrow: s.section === "hours" ? "-135deg" : "45deg",
+      mapOpen: s.section === "map", mapArrow: s.section === "map" ? "-135deg" : "45deg",
+      socialOpen: s.section === "social", socialArrow: s.section === "social" ? "-135deg" : "45deg",
+      qrOpen: s.section === "qr", qrArrow: s.section === "qr" ? "-135deg" : "45deg",
+      accountOpen: s.section === "account", accountArrow: s.section === "account" ? "-135deg" : "45deg",
+      days: [
+        ["Monday", "Mon", "12:00", "23:00"], ["Tuesday", "Tue", "12:00", "23:00"],
+        ["Wednesday", "Wed", "12:00", "23:00"], ["Thursday", "Thu", "12:00", "23:00"],
+        ["Friday", "Fri", "12:00", "00:00"], ["Saturday", "Sat", "12:00", "00:00"],
+        ["Sunday", "Sun", "12:00", "23:00"]
+      ].map(([full, short, o, c]) => {
+        const shut = !!s.closed[full];
+        return {
+          short: short, open: shut ? "—" : o, close: shut ? "Closed" : c,
+          dim: shut ? 0.45 : 1,
+          switchBg: shut ? "#C9BCA0" : "#0E5C34",
+          knob: shut ? "3px" : "21px",
+          toggle: () => this.setState({ closed: Object.assign({}, s.closed, { [full]: !shut }) })
+        };
+      }),
+      copyLink: () => { this.setState({ copied: true }); clearTimeout(this._c); this._c = setTimeout(() => this.setState({ copied: false }), 1800); },
+      copyLabel: s.copied ? "Copied" : "Copy",
+      copyColor: s.copied ? "#0E5C34" : "#B5562A",
+      copyBorder: s.copied ? "#0E5C34" : "#B5562A"
+    };
+  }
+}
+</script>
+</body>
+</html>
