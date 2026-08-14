@@ -20,6 +20,20 @@ type CategoryRow = {
   _count: { items: number };
 };
 
+function GripIcon({ dragging }: { dragging: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`h-4 w-3 transition-colors ${dragging ? "text-[#0E5C34]" : "text-[#A99B7E]"}`}
+      aria-hidden
+    >
+      {[6, 12, 18].flatMap((cy) =>
+        [8, 16].map((cx) => <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="2" fill="currentColor" />),
+      )}
+    </svg>
+  );
+}
+
 export function CategoriesClient({
   drinkCategories,
   foodCategories,
@@ -31,6 +45,7 @@ export function CategoriesClient({
   const [scope, setScope] = useState<CategoryType>("DRINK");
   const [rows, setRows] = useState(scope === "DRINK" ? drinkCategories : foodCategories);
   const [dragId, setDragId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newScope, setNewScope] = useState<CategoryType>("DRINK");
@@ -44,6 +59,7 @@ export function CategoriesClient({
   }
 
   function onDrop(targetId: string) {
+    setDragOverId(null);
     if (!dragId || dragId === targetId) return;
     const next = [...rows];
     const fromIdx = next.findIndex((r) => r.id === dragId);
@@ -57,6 +73,8 @@ export function CategoriesClient({
       router.refresh();
     });
   }
+
+  const draggedIndex = dragId ? rows.findIndex((r) => r.id === dragId) : -1;
 
   function toggleHidden(row: CategoryRow) {
     setRows((prev) => prev.map((r) => (r.id === row.id ? { ...r, hidden: !r.hidden } : r)));
@@ -100,35 +118,55 @@ export function CategoriesClient({
       <p className="text-sm text-[#6E6455]">Drag to reorder. The order here is the order on the public menu.</p>
 
       <div className="flex flex-col gap-2">
-        {rows.map((row) => (
-          <div
-            key={row.id}
-            draggable
-            onDragStart={() => setDragId(row.id)}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={() => onDrop(row.id)}
-            className={`flex items-center gap-3 rounded-lg border bg-[#FFFDF8] p-3 shadow-sm transition-opacity ${
-              row.hidden ? "opacity-55" : ""
-            } ${dragId === row.id ? "border-[#D4A32C]" : "border-[#E0CD98]"}`}
-          >
-            <span className="flex h-12 w-12 shrink-0 cursor-grab items-center justify-center text-[#6E6455]">
-              ⠿
-            </span>
-            <div className="flex flex-1 flex-col">
-              <span className="text-[17px] font-semibold text-[#1E1B16]">{row.name}</span>
-              <span className="text-xs text-[#6E6455]">{row._count.items} items</span>
-            </div>
-            <Toggle checked={!row.hidden} onChange={() => toggleHidden(row)} label={`${row.name} visible`} />
-            <button
-              type="button"
-              onClick={() => setDeleteTarget(row)}
-              aria-label={`Options for ${row.name}`}
-              className="flex h-11 w-11 items-center justify-center text-xl text-[#6E6455]"
+        {rows.map((row, index) => {
+          const isDragging = dragId === row.id;
+          const isDropTarget = dragOverId === row.id && dragId !== row.id;
+          const isBelowDragged = draggedIndex !== -1 && index > draggedIndex && dragId !== row.id;
+
+          return (
+            <div
+              key={row.id}
+              draggable
+              onDragStart={() => setDragId(row.id)}
+              onDragOver={(e) => {
+                e.preventDefault();
+                if (dragId && dragId !== row.id) setDragOverId(row.id);
+              }}
+              onDragLeave={() => setDragOverId((prev) => (prev === row.id ? null : prev))}
+              onDrop={() => onDrop(row.id)}
+              onDragEnd={() => {
+                setDragId(null);
+                setDragOverId(null);
+              }}
+              className={`flex items-center gap-3 rounded-lg border bg-[#FFFDF8] p-3 shadow-sm transition-all duration-150 ${
+                row.hidden ? "opacity-55" : ""
+              } ${
+                isDragging
+                  ? "border-2 border-[#D4A32C] shadow-[0_28px_44px_rgba(30,27,22,.13)] -rotate-1 scale-[1.03]"
+                  : isDropTarget
+                    ? "border-2 border-dashed border-[#D4A32C]"
+                    : "border-[#E0CD98]"
+              } ${isBelowDragged ? "opacity-60" : ""}`}
             >
-              ⋮
-            </button>
-          </div>
-        ))}
+              <span className="flex h-12 w-12 shrink-0 cursor-grab items-center justify-center">
+                <GripIcon dragging={isDragging} />
+              </span>
+              <div className="flex flex-1 flex-col">
+                <span className="text-[17px] font-semibold text-[#1E1B16]">{row.name}</span>
+                <span className="text-xs text-[#6E6455]">{row._count.items} items</span>
+              </div>
+              <Toggle checked={!row.hidden} onChange={() => toggleHidden(row)} label={`${row.name} visible`} />
+              <button
+                type="button"
+                onClick={() => setDeleteTarget(row)}
+                aria-label={`Options for ${row.name}`}
+                className="flex h-11 w-11 items-center justify-center text-xl text-[#6E6455]"
+              >
+                ⋮
+              </button>
+            </div>
+          );
+        })}
       </div>
 
       <button

@@ -207,7 +207,7 @@ export function ItemsClient({
           <div className="flex items-center gap-2">
             <Link
               href="/admin/categories"
-              className="hidden rounded-md border border-[#D4A32C] px-3 py-2 text-sm font-semibold text-[#0E5C34] lg:block"
+              className="rounded-md border border-[#D4A32C] px-3 py-2 text-sm font-semibold text-[#0E5C34]"
             >
               Categories
             </Link>

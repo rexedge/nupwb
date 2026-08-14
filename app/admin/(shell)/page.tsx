@@ -101,20 +101,34 @@ export default async function AdminDashboardPage() {
           <h2 className="text-xs font-semibold uppercase tracking-widest text-[#6E6455]">
             Recently updated
           </h2>
-          <Link href="/admin/items" className="text-sm font-semibold text-[#0E5C34]">
+          <Link href="/admin/items" className="text-sm font-semibold text-[#0E5C34] lg:font-semibold lg:text-[16px]">
             See all
           </Link>
         </div>
         <div className="divide-y divide-[#F0E6CF]">
           {activity.map((item) => (
-            <div key={item.id} className="flex items-center justify-between gap-4 py-3">
-              <div className="flex flex-col">
-                <span className="text-[15px] font-semibold text-[#1E1B16]">{item.name}</span>
-                <span className="text-xs text-[#6E6455]">{relativeTime(item.updatedAt)}</span>
+            <div key={item.id}>
+              {/* Mobile: name+time stacked left, price right */}
+              <div className="flex items-center justify-between gap-4 py-3 lg:hidden">
+                <div className="flex flex-col">
+                  <span className="text-[15px] font-semibold text-[#1E1B16]">{item.name}</span>
+                  <span className="text-xs text-[#6E6455]">
+                    {relativeTime(item.updatedAt)}
+                    {!item.available && " · marked finished"}
+                  </span>
+                </div>
+                <span className="text-[15px] font-bold tabular-nums text-[#1E1B16]">
+                  {priceOrFinished(item)}
+                </span>
               </div>
-              <span className="text-[15px] font-bold tabular-nums text-[#1E1B16]">
-                {priceOrFinished(item)}
-              </span>
+              {/* Desktop: 3-column row */}
+              <div className="hidden lg:grid lg:grid-cols-[1fr_auto_auto] lg:items-center lg:gap-8 lg:py-3">
+                <span className="text-[15px] font-semibold text-[#1E1B16]">{item.name}</span>
+                <span className="text-[15px] text-[#6E6455]">{relativeTime(item.updatedAt)}</span>
+                <span className="justify-self-end text-[15px] font-bold tabular-nums text-[#1E1B16]">
+                  {priceOrFinished(item)}
+                </span>
+              </div>
             </div>
           ))}
           {activity.length === 0 && <p className="py-3 text-sm text-[#6E6455]">No activity yet.</p>}

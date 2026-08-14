@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { logoutAction } from "@/app/admin/login/actions";
 import { DashboardIcon, MenuListIcon, QrGlyphIcon, SettingsSlidersIcon } from "./NavIcons";
+import { AkwateBand } from "@/components/site/AkwateBand";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/admin", Icon: DashboardIcon },
@@ -119,6 +120,9 @@ export function AdminShell({ email, children }: { email: string; children: React
             </div>
           </div>
         </header>
+        <div className="lg:hidden">
+          <AkwateBand variant="seal" />
+        </div>
 
         <main className="flex flex-1 flex-col">{children}</main>
 
