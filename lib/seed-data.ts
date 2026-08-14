@@ -413,7 +413,7 @@ export const allCategories: SeedCategory[] = [...drinkCategories, ...foodCategor
 export const venueSettings = {
   venueName: "Nwoke Udi Palm Wine Bar",
   shortName: "NUPWB",
-  tagline: "Nnọọ — the home of fresh palm wine",
+  tagline: "Promoting culture and maintaining tradition",
   menuSlug: "nwoke-udi", // IMMUTABLE once QR codes are printed.
   // Source: Mr Timothy (Head of Operations, Transpay), WhatsApp, 13 Aug 2026.
   address: "85 Club Road (Abakaliki Street), Awka, Anambra State",

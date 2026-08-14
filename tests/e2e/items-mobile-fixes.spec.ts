@@ -5,7 +5,7 @@ test.use({ ...devices["iPhone 13"] });
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "timothy@nupwb.ng";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "pammy2026";
 
-test("FAB clears the bottom tab bar and price edit shows comma-formatted keypad", async ({ page }) => {
+test("FAB clears the bottom tab bar and price edit uses the system keyboard", async ({ page }) => {
   await page.goto("/admin/login?next=%2Fadmin%2Fitems");
   await page.getByLabel("Email").fill(ADMIN_EMAIL);
   await page.getByLabel("Password").fill(ADMIN_PASSWORD);
@@ -22,17 +22,20 @@ test("FAB clears the bottom tab bar and price edit shows comma-formatted keypad"
   expect(fabBox.y + fabBox.height).toBeLessThanOrEqual(tabBox.y + 1);
   await page.screenshot({ path: "test-results/screenshots/items-fab.png" });
 
-  // Switch to Food scope and tap-to-edit "Isi Ewu" (single-variant) to check the keypad.
+  // Switch to Food scope and tap-to-edit "Isi Ewu" (single-variant) — field should start
+  // empty (not pre-filled with the old price) and accept typed digits directly.
   await page.getByRole("button", { name: "Food" }).click();
   await page.getByText("Isi Ewu", { exact: true }).waitFor();
   await page.getByText("tap to edit").first().click();
 
-  await expect(page.getByRole("button", { name: "00", exact: true })).toBeVisible();
-  // Fresh entry: field starts empty, typing "13" + "00" should read exactly ₦13,00 -> with
-  // the dedicated "00" key this becomes 1,3,0,0 -> "1300" -> ₦1,300 formatted.
-  await page.getByRole("button", { name: "1", exact: true }).click();
-  await page.getByRole("button", { name: "3", exact: true }).click();
-  await page.getByRole("button", { name: "00", exact: true }).click();
+  const priceInput = page.locator("input[inputmode='numeric']");
+  await expect(priceInput).toBeVisible();
+  await expect(priceInput).toBeFocused();
+  await expect(priceInput).toHaveValue("");
+  await expect(page.getByText("was ₦12,000")).toBeVisible();
+
+  await priceInput.fill("1300");
+  await priceInput.press("Enter");
   await expect(page.getByText("₦1,300", { exact: true })).toBeVisible();
 
   await page.screenshot({ path: "test-results/screenshots/items-price-edit.png" });

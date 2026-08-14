@@ -24,8 +24,6 @@ type ItemRow = {
   variants: Variant[];
 };
 
-const KEYPAD_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "00", "0", "⌫"];
-
 function priceLabel(item: ItemRow): string {
   const dim = !item.available;
   if (item.variants.length === 1) {
@@ -160,17 +158,8 @@ export function ItemsClient({
   function startEdit(item: ItemRow) {
     if (item.variants.length !== 1) return;
     setEditingId(item.id);
-    // Start empty rather than pre-filled — this is a numeric keypad for typing the NEW price,
-    // not a text field for editing the old one digit-by-digit.
+    // Start empty — the system keyboard is for typing the NEW price, not editing the old one.
     setDraftPrice("");
-  }
-
-  function pressKey(key: string) {
-    if (key === "⌫") {
-      setDraftPrice((p) => p.slice(0, -1));
-    } else {
-      setDraftPrice((p) => (p + key).slice(0, 7));
-    }
   }
 
   async function saveEdit() {
@@ -305,15 +294,25 @@ export function ItemsClient({
                 <div className="flex flex-1 items-center gap-2">
                   <div className="flex flex-1 flex-col">
                     <span className="text-[15px] font-semibold text-[#1E1B16]">{item.name}</span>
-                    <span className="flex items-baseline gap-1 font-mono text-lg font-bold text-[#0E5C34]">
-                      ₦{Number(draftPrice || "0").toLocaleString("en-NG")}
-                    </span>
+                    <span className="text-xs text-[#6E6455]">was {naira(item.variants[0].priceMinor)}</span>
+                  </div>
+                  <div className="flex items-center rounded-md border border-[#D4A32C] bg-[#FBF6EC] px-2">
+                    <span className="font-mono text-lg font-bold text-[#0E5C34]">₦</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      autoFocus
+                      value={draftPrice}
+                      onChange={(e) => setDraftPrice(e.target.value.replace(/\D/g, "").slice(0, 7))}
+                      onKeyDown={(e) => e.key === "Enter" && saveEdit()}
+                      className="w-24 bg-transparent py-2 font-mono text-lg font-bold text-[#0E5C34] focus:outline-none"
+                    />
                   </div>
                   <button
                     type="button"
                     onClick={saveEdit}
                     aria-label="Save price"
-                    className="flex h-11 w-11 items-center justify-center rounded-full bg-[#0E5C34] text-[#FBF6EC]"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0E5C34] text-[#FBF6EC]"
                   >
                     ✓
                   </button>
@@ -321,7 +320,7 @@ export function ItemsClient({
                     type="button"
                     onClick={() => setEditingId(null)}
                     aria-label="Cancel"
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-[#D4A32C] text-[#1E1B16]"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#D4A32C] text-[#1E1B16]"
                   >
                     ×
                   </button>
@@ -356,29 +355,6 @@ export function ItemsClient({
         })}
         {filtered.length === 0 && <p className="py-10 text-center text-sm text-[#6E6455]">No items match.</p>}
       </div>
-
-      {editingItem && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E0CD98] bg-[#FFFDF8] p-3 shadow-2xl">
-          <div className="mb-2 flex items-center justify-between text-sm">
-            <span className="font-semibold text-[#1E1B16]">{editingItem.name}</span>
-            <span className="text-[#6E6455]">was {naira(editingItem.variants[0].priceMinor)}</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {KEYPAD_KEYS.map((key) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => pressKey(key)}
-                className={`h-12 rounded-md text-lg font-semibold ${
-                  key === "⌫" ? "bg-[#E0CD98] text-[#1E1B16]" : "bg-[#EFE7D6] text-[#1E1B16]"
-                }`}
-              >
-                {key}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {bulkMode && selected.size > 0 && !editingItem && (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E0CD98] bg-[#FFFDF8] p-4 shadow-2xl">

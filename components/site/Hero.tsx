@@ -63,7 +63,7 @@ export async function Hero() {
             />
           </div>
           <p className="mt-3 font-display text-[22px] italic text-cream-text lg:mt-0 lg:text-[28px]">
-            Nnọọ — the home of fresh palm wine
+            {venue.tagline}
           </p>
           <p className="mt-1.5 max-w-[305px] text-[16px] leading-[1.55] text-cream-text-soft lg:mt-0 lg:max-w-[520px] lg:text-[19px] lg:leading-[1.6]">
             Tapped daily and served cold, with isi ewu, nkwobi and abacha from the kitchen.
