@@ -59,13 +59,19 @@ export default async function AdminDashboardPage() {
           <span className="font-mono text-3xl font-bold text-[#1E1B16]">{metrics.totalCategories}</span>
           <span className="text-xs text-[#6E6455]">Categories</span>
         </div>
-        <div className="flex flex-col gap-1 rounded-lg border border-[#E0CD98] bg-[#FFFDF8] p-5 shadow-sm">
+        {/* Clickable: the finished list is where you go to put items back on the menu. */}
+        <Link
+          href="/admin/items?filter=finished"
+          className="flex flex-col gap-1 rounded-lg border border-[#E0CD98] bg-[#FFFDF8] p-5 shadow-sm hover:border-[#D4A32C]"
+        >
           <span className="flex items-center gap-1.5 font-mono text-3xl font-bold text-[#B7202B]">
             {metrics.finishedCount}
             <span className="h-2 w-2 rounded-full bg-[#B7202B]" />
           </span>
-          <span className="text-xs text-[#6E6455]">Marked finished</span>
-        </div>
+          <span className="text-xs text-[#6E6455]">
+            Marked finished{metrics.finishedCount > 0 && <span className="text-[#0E5C34]"> · review</span>}
+          </span>
+        </Link>
         <div className="flex flex-col gap-1 rounded-lg border border-[#E0CD98] bg-[#FFFDF8] p-5 shadow-sm">
           <span className="font-mono text-xl font-bold text-[#0E5C34]">
             {metrics.lastUpdatedAt ? relativeTime(metrics.lastUpdatedAt) : "—"}
@@ -79,6 +85,7 @@ export default async function AdminDashboardPage() {
           { label: "Add a New Item", href: "/admin/items/new", icon: "+" },
           { label: "Edit Prices", href: "/admin/items", icon: "₦" },
           { label: "Mark Items Finished", href: "/admin/items", icon: "−" },
+          { label: "Restore Finished Items", href: "/admin/items?filter=finished", icon: "↺" },
         ].map((action) => (
           <Link
             key={action.label}

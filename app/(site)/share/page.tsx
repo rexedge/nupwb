@@ -1,5 +1,5 @@
 import { AkwateBand } from "@/components/site/AkwateBand";
-import { getVenueSettings, whatsappDigits } from "@/lib/venue";
+import { getVenueSettings } from "@/lib/venue";
 import { menuUrl as buildMenuUrl } from "@/lib/site-url";
 import { getMenu } from "@/lib/queries";
 import { naira } from "@/lib/money";

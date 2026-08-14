@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { MenuSwitch } from "./MenuSwitch";
 import { WhatsAppGlyph } from "./WhatsAppGlyph";
 import { naira } from "@/lib/money";
-import { whatsappDigits } from "@/lib/venue-utils";
 import { menuUrl as buildMenuUrl } from "@/lib/site-url";
 import type { CategoryWithItems } from "@/lib/queries";
 
@@ -64,13 +64,14 @@ export function MenuView({
   kind,
   menuSlug,
   venueName,
-  whatsappNumber,
+  showFinished,
 }: {
   categories: CategoryWithItems[];
   kind: "drinks" | "food";
   menuSlug: string;
   venueName: string;
-  whatsappNumber: string;
+  /** venue setting `showFinishedItems`: false hides finished items instead of greying them out. */
+  showFinished: boolean;
 }) {
   const [query, setQuery] = useState("");
   const [activeSlug, setActiveSlug] = useState(categories[0]?.slug ?? "");
@@ -79,15 +80,25 @@ export function MenuView({
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const q = query.trim().toLowerCase();
-  const filtered = useMemo(() => {
-    if (!q) return categories;
+
+  // Finished items are greyed out by default; when the venue turns `showFinishedItems` off they
+  // drop out entirely — including from the category chips, so no chip jumps to an empty section.
+  const visible = useMemo(() => {
+    if (showFinished) return categories;
     return categories
+      .map((c) => ({ ...c, items: c.items.filter((i) => i.available) }))
+      .filter((c) => c.items.length > 0);
+  }, [categories, showFinished]);
+
+  const filtered = useMemo(() => {
+    if (!q) return visible;
+    return visible
       .map((c) => ({
         ...c,
         items: c.items.filter((i) => i.name.toLowerCase().includes(q)),
       }))
       .filter((c) => c.items.length > 0);
-  }, [categories, q]);
+  }, [visible, q]);
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 900);
@@ -118,7 +129,6 @@ export function MenuView({
   }
 
   const menuUrl = buildMenuUrl(menuSlug);
-  const waHref = `https://wa.me/${whatsappDigits(whatsappNumber)}`;
   const shareHref = `https://wa.me/?text=${encodeURIComponent(`Check out the ${kind} menu at ${venueName}: ${menuUrl}`)}`;
 
   async function copyLink() {
@@ -134,9 +144,14 @@ export function MenuView({
   return (
     <div className="flex flex-1 flex-col bg-card-alt">
       {/* top offset must match Header's rendered height (logo row + padding + Akwete seal strip):
-          75px mobile (44px logo + 20px py-2.5 + 11px seal), 93px desktop (56px logo + 24px lg:py-3 + 13px seal) */}
+          75px mobile (44px logo + 20px py-2.5 + 11px seal), 93px desktop (56px logo + 24px lg:py-3 + 13px seal).
+          The sections' scroll-mt below must in turn match THIS bar's height — MenuSwitch row (40px)
+          + gap (10px) + search (44px) + chips (34px) + py-3 — or jumping to a category hides its heading. */}
       <div className="sticky top-[75px] z-20 flex flex-col gap-2.5 border-b border-[#E0CD98] bg-card-alt px-4 py-3 lg:top-[93px] lg:px-10">
         <div className="mx-auto w-full max-w-[1240px]">
+          <div className="mb-2.5">
+            <MenuSwitch current={kind} />
+          </div>
           <div className="relative">
             <input
               type="search"
@@ -157,7 +172,7 @@ export function MenuView({
             )}
           </div>
           <div className="mt-2.5 flex gap-2 overflow-x-auto [scrollbar-width:none]">
-            {categories.map((c) => (
+            {visible.map((c) => (
               <button
                 key={c.slug}
                 type="button"
@@ -192,7 +207,7 @@ export function MenuView({
             ref={(el) => {
               sectionRefs.current[category.slug] = el;
             }}
-            className="scroll-mt-[220px] lg:scroll-mt-[240px]"
+            className="scroll-mt-[270px] lg:scroll-mt-[290px]"
           >
             <div className="mb-2.5 flex items-baseline justify-between gap-3">
               <h2 className="font-display text-[24px] font-bold text-ink lg:text-[28px]">{category.name}</h2>

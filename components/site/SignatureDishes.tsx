@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { getFeaturedItems } from "@/lib/queries";
 import { naira } from "@/lib/money";
 
@@ -53,9 +54,9 @@ export async function SignatureDishes() {
       <div className="flex flex-col gap-4 pt-5.5 lg:mx-auto lg:max-w-[1240px] lg:gap-7 lg:pt-0 lg:px-10">
         <div className="flex items-end justify-between gap-3 px-5 lg:px-0">
           <h2 className="font-display text-[28px] font-bold text-ink lg:text-[42px]">Signature Dishes</h2>
-          <a href="/menu" className="whitespace-nowrap text-[16px] font-semibold text-palm! lg:text-[18px]">
+          <Link href="/menu" className="whitespace-nowrap text-[16px] font-semibold text-palm! lg:text-[18px]">
             All food →
-          </a>
+          </Link>
         </div>
         <div className="flex gap-3.5 overflow-x-auto px-5 pt-0.5 pb-2 [scrollbar-width:thin] lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0">
           {items.map((item) => (

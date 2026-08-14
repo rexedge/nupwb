@@ -18,7 +18,9 @@ const categoryWithItems = {
 export type CategoryWithItems = Prisma.CategoryGetPayload<typeof categoryWithItems>;
 
 export async function getMenu(type: CategoryType): Promise<CategoryWithItems[]> {
-  return prisma.category.findMany({ where: { type }, ...categoryWithItems });
+  // `hidden` is the admin's per-category visibility toggle (Categories screen) — it has to be
+  // honoured here or turning a category off does nothing to the public menu.
+  return prisma.category.findMany({ where: { type, hidden: false }, ...categoryWithItems });
 }
 
 export async function getFeaturedItems(limit = 4) {
@@ -105,9 +107,16 @@ export async function createCategory(input: { name: string; type: CategoryType }
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
-  const count = await prisma.category.count({ where: { type: input.type } });
+  // Positions are a single sequence shared by both types (the seed numbers drinks 0-6 then
+  // food 7+), so a per-type COUNT would drop every new food category above Signature Dishes.
+  // Append after the current last one of its own type instead.
+  const last = await prisma.category.findFirst({
+    where: { type: input.type },
+    orderBy: { position: "desc" },
+    select: { position: true },
+  });
   return prisma.category.create({
-    data: { name: input.name, slug, type: input.type, position: count },
+    data: { name: input.name, slug, type: input.type, position: (last?.position ?? -1) + 1 },
   });
 }
 

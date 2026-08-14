@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AnkaraPattern } from "./AnkaraPattern";
 import { ImagePlaceholder } from "./ImagePlaceholder";
 
@@ -24,6 +25,10 @@ export function PalmWineFeature() {
             <br />
             Tapped Daily
           </h2>
+          {/* House slogan for the akulu, supplied by the client. */}
+          <p className="font-display text-[19px] italic text-gold-light lg:text-[22px]">
+            Akulu Pammy — Nnaochie Di n&rsquo;mmanya
+          </p>
         </div>
 
         <div className="relative h-53.5 border border-gold p-1.5 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:h-110 lg:p-2">
@@ -43,12 +48,12 @@ export function PalmWineFeature() {
             <PriceChip label="Akulu Pammy" price="₦6,000" />
             <PriceChip label="Soft Pammy" price="₦5,000" />
           </div>
-          <a
+          <Link
             href="/drinks"
             className="flex h-13 items-center justify-center rounded-md border border-gold text-[17px] font-semibold text-cream-text! lg:h-14 lg:w-fit lg:px-8 lg:text-[18px]"
           >
             See the Drinks Menu
-          </a>
+          </Link>
         </div>
       </div>
     </section>

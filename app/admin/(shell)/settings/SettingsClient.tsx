@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useId, cloneElement, isValidElement } from "react";
 import type { ReactElement } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Accordion } from "@/components/admin/Accordion";
 import { Toggle } from "@/components/admin/Toggle";
@@ -274,12 +275,12 @@ export function SettingsClient({ venue, email }: { venue: VenueSettings; email: 
                 Your QR code never changes, even when you edit prices. Printed tents stay valid.
               </p>
             </div>
-            <a
+            <Link
               href="/share"
               className="flex h-13 items-center justify-center rounded-md border border-[#D4A32C] text-base font-semibold text-[#0E5C34]"
             >
               Download Print Assets
-            </a>
+            </Link>
           </div>
         </Accordion>
 

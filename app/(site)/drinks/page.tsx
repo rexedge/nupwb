@@ -13,7 +13,9 @@ export default async function DrinksPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <section className="border-b border-[#D4A32C]/40 bg-[#083D22] px-6 py-14 text-center text-[#FBF6EC]">
+      {/* Compact on phones so the Home/Drinks/Food switcher inside MenuView is on screen for a
+          guest who has just scanned a table QR code, with no scrolling. */}
+      <section className="border-b border-[#D4A32C]/40 bg-[#083D22] px-6 py-8 text-center text-[#FBF6EC] lg:py-14">
         <div className="mx-auto flex max-w-3xl flex-col gap-3">
           <span className="text-xs font-semibold uppercase tracking-widest text-[#E7DFCB]">
             {venue.venueName}
@@ -32,7 +34,7 @@ export default async function DrinksPage() {
         kind="drinks"
         menuSlug={venue.menuSlug}
         venueName={venue.venueName}
-        whatsappNumber={venue.whatsappNumber}
+        showFinished={venue.showFinishedItems}
       />
 
       <div className="mx-auto w-full max-w-[1240px] px-4 pb-10 lg:px-10">

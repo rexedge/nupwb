@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ImagePlaceholder } from "./ImagePlaceholder";
 import { getVenueSettings, whatsappDigits } from "@/lib/venue";
 
@@ -69,20 +70,20 @@ export async function Hero() {
             Tapped daily and served cold, with isi ewu, nkwobi and abacha from the kitchen.
           </p>
 
-          <a
+          <Link
             href="/menu"
             className="mt-6 flex h-13 items-center justify-center rounded-md border border-gold bg-palm text-[17px] font-semibold text-cream-text! lg:hidden"
           >
             View Our Menu
-          </a>
+          </Link>
 
           <div className="mt-2 hidden gap-3.5 lg:flex">
-            <a
+            <Link
               href="/menu"
               className="flex h-14 items-center rounded-md border border-gold bg-palm px-8 text-[18px] font-semibold text-cream-text!"
             >
               View Our Menu
-            </a>
+            </Link>
             <a
               href={waHref}
               target="_blank"

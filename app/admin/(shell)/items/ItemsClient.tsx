@@ -92,19 +92,26 @@ function ItemMenu({
   );
 }
 
+/** "finished" narrows the list to items marked finished — the only practical way to find them
+ *  again in a 100+ item list and put them back on the menu. */
+type AvailabilityFilter = "all" | "finished";
+
 export function ItemsClient({
   drinkItems,
   foodItems,
   initialScope,
+  initialAvailability = "all",
 }: {
   drinkItems: ItemRow[];
   foodItems: ItemRow[];
   initialScope: CategoryType;
+  initialAvailability?: AvailabilityFilter;
 }) {
   const router = useRouter();
   const [scope, setScope] = useState<CategoryType>(initialScope);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [availability, setAvailability] = useState<AvailabilityFilter>(initialAvailability);
   const [bulkMode, setBulkMode] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -125,11 +132,18 @@ export function ItemsClient({
 
   const filtered = useMemo(() => {
     return items.filter((item) => {
+      if (availability === "finished" && item.available) return false;
       if (categoryFilter !== "all" && item.categoryId !== categoryFilter) return false;
       if (search.trim() && !item.name.toLowerCase().includes(search.trim().toLowerCase())) return false;
       return true;
     });
-  }, [items, categoryFilter, search]);
+  }, [items, availability, categoryFilter, search]);
+
+  const finishedHere = useMemo(() => items.filter((i) => !i.available).length, [items]);
+  const finishedThere = useMemo(
+    () => (scope === "DRINK" ? foodItems : drinkItems).filter((i) => !i.available).length,
+    [scope, drinkItems, foodItems],
+  );
 
   function toggleSelected(id: string) {
     setSelected((prev) => {
@@ -185,9 +199,9 @@ export function ItemsClient({
     router.refresh();
   }
 
-  async function markSelectedFinished() {
+  async function markSelectedAvailable(available: boolean) {
     if (selected.size === 0) return;
-    await setItemsAvailableAction(Array.from(selected), false);
+    await setItemsAvailableAction(Array.from(selected), available);
     setSelected(new Set());
     setBulkMode(false);
     router.refresh();
@@ -230,7 +244,7 @@ export function ItemsClient({
           className="rounded-md border border-[#E0CD98] bg-[#FFFDF8] px-4 py-2.5 text-base text-[#1E1B16] placeholder:text-[#6E6455] focus:border-[#0E5C34] focus:outline-none"
         />
 
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <SegmentedControl
             options={[
               { value: "DRINK" as CategoryType, label: "Drinks" },
@@ -242,6 +256,20 @@ export function ItemsClient({
               setCategoryFilter("all");
             }}
           />
+          {/* Labelled: "All" also appears in the category chips below. */}
+          <div role="group" aria-label="Availability filter">
+            <SegmentedControl
+              options={[
+                { value: "all" as AvailabilityFilter, label: "All" },
+                {
+                  value: "finished" as AvailabilityFilter,
+                  label: finishedHere > 0 ? `Finished (${finishedHere})` : "Finished",
+                },
+              ]}
+              value={availability}
+              onChange={setAvailability}
+            />
+          </div>
         </div>
 
         <div className="flex gap-2 overflow-x-auto [scrollbar-width:none]">
@@ -269,7 +297,14 @@ export function ItemsClient({
         </div>
         <p className="text-xs text-[#6E6455]">
           {filtered.length} {filtered.length === 1 ? "item" : "items"} · {scope === "DRINK" ? "drinks" : "food"}
+          {availability === "finished" && " · marked finished"}
         </p>
+        {availability === "finished" && filtered.length > 0 && (
+          <p className="text-xs text-[#6E6455]">
+            Put an item back on the menu with <span className="font-semibold text-[#1E1B16]">⋮ → Mark Available</span>,
+            or use Bulk to restore several at once.
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col divide-y divide-[#F0E6CF] px-4">
@@ -353,7 +388,27 @@ export function ItemsClient({
             </div>
           );
         })}
-        {filtered.length === 0 && <p className="py-10 text-center text-sm text-[#6E6455]">No items match.</p>}
+        {filtered.length === 0 && (
+          <div className="flex flex-col items-center gap-2 py-10 text-center text-sm text-[#6E6455]">
+            <p>
+              {availability === "finished"
+                ? `Nothing is marked finished in ${scope === "DRINK" ? "drinks" : "food"}.`
+                : "No items match."}
+            </p>
+            {availability === "finished" && finishedThere > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setScope(scope === "DRINK" ? "FOOD" : "DRINK");
+                  setCategoryFilter("all");
+                }}
+                className="font-semibold text-[#0E5C34] underline"
+              >
+                {finishedThere} finished in {scope === "DRINK" ? "food" : "drinks"} — show them
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {bulkMode && selected.size > 0 && !editingItem && (
@@ -368,16 +423,23 @@ export function ItemsClient({
             <button
               type="button"
               onClick={() => setAdjustOpen(true)}
-              className="h-11 rounded-md bg-[#0E5C34] text-sm font-semibold text-[#FBF6EC]"
+              className="col-span-2 h-11 rounded-md bg-[#0E5C34] text-sm font-semibold text-[#FBF6EC]"
             >
               Adjust Prices
             </button>
             <button
               type="button"
-              onClick={markSelectedFinished}
+              onClick={() => markSelectedAvailable(false)}
               className="h-11 rounded-md border border-[#B5562A] text-sm font-semibold text-[#B5562A]"
             >
               Mark Finished
+            </button>
+            <button
+              type="button"
+              onClick={() => markSelectedAvailable(true)}
+              className="h-11 rounded-md border border-[#0E5C34] text-sm font-semibold text-[#0E5C34]"
+            >
+              Mark Available
             </button>
           </div>
         </div>

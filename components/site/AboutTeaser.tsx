@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ImagePlaceholder } from "./ImagePlaceholder";
 
 export function AboutTeaser() {
@@ -33,12 +34,12 @@ export function AboutTeaser() {
             kitchen. Nothing here is rushed — the gourd comes to the table, the isi ewu comes hot, and
             the evening goes where it goes.
           </p>
-          <a
+          <Link
             href="/about"
             className="w-fit border-b border-gold pb-0.75 text-[16px] font-semibold text-palm! lg:text-[18px]"
           >
             Our Story →
-          </a>
+          </Link>
         </div>
       </div>
     </section>

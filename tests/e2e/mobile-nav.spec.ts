@@ -13,7 +13,8 @@ test("mobile drawer menu shows all labels including Drinks", async ({ page }) =>
   await page.waitForLoadState("networkidle");
 
   await page.getByRole("button", { name: "Toggle menu" }).click();
-  await expect(page.getByRole("link", { name: "Drinks", exact: true })).toBeVisible();
+  // Scoped to the header: the menu pages also carry a Drinks link in the MenuSwitch row.
+  await expect(page.locator("header").getByRole("link", { name: "Drinks", exact: true })).toBeVisible();
 
   await page.screenshot({ path: "test-results/screenshots/mobile-drawer.png" });
 

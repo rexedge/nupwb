@@ -64,7 +64,9 @@ const palmWine: SeedCategory = {
   type: "DRINK",
   note: "Tapped fresh daily — the house speciality.",
   items: [
-    { name: "Akulu Pammy", featured: true, variants: one(6000) },
+    // "Nnaochie Di n'mmanya" is the house slogan for the akulu — carried through to the
+    // palm wine feature block on the homepage.
+    { name: "Akulu Pammy", description: "Nnaochie Di n'mmanya", featured: true, variants: one(6000) },
     { name: "Soft Pammy", featured: true, variants: one(5000) },
     {
       name: "Take-Away Can",
@@ -370,6 +372,20 @@ const grills: SeedCategory = {
   ],
 };
 
+const sharwama: SeedCategory = {
+  slug: "sharwama",
+  name: "Sharwama",
+  type: "FOOD",
+  // Source: client, 14 Aug 2026. Spelling is the client's own ("Sharwama") and matches the
+  // category already live in the database — deliberately NOT normalised to "Shawarma" here,
+  // because renaming it would change what guests see. Flagged in outstandingQueries instead.
+  items: [
+    { name: "Beef Sharwama", variants: one(4500) },
+    { name: "Chicken Sharwama", variants: one(5500) },
+    { name: "Special Sharwama", variants: one(7000) },
+  ],
+};
+
 const shisha: SeedCategory = {
   slug: "shisha",
   name: "Shisha",
@@ -404,6 +420,7 @@ export const foodCategories: SeedCategory[] = [
   mainDishes,
   abacha,
   grills,
+  sharwama,
   shisha,
 ];
 
@@ -449,6 +466,8 @@ export const venueSettings = {
  * so nothing ships with a placeholder price.
  */
 export const outstandingQueries: string[] = [
+  "Sharwama — confirm Chicken (₦5,500) is priced above Beef (₦4,500), and what goes into Special (₦7,000)",
+  "Sharwama — confirm the spelling; the standard rendering is \"Shawarma\"",
   "Chapman (Non-Alcoholic) — no price supplied",
   "Shisha — no price supplied",
   "Ice Fish Ugba — confirm item name and price (₦3,000 in source)",
