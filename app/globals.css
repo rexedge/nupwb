@@ -34,17 +34,22 @@
   --font-body: var(--font-source-sans);
 }
 
-body {
-  background: var(--color-page);
-  color: var(--color-ink);
-  font-family: var(--font-body), system-ui, sans-serif;
-}
+/* Bare (unlayered) CSS always outranks Tailwind's utility classes, which live inside
+   `@layer utilities` — so these defaults must be in `@layer base` or every `<a>`/`<Link>`
+   with an explicit text color utility gets silently overridden back to palm green. */
+@layer base {
+  body {
+    background: var(--color-page);
+    color: var(--color-ink);
+    font-family: var(--font-body), system-ui, sans-serif;
+  }
 
-a {
-  color: var(--color-palm);
-}
-a:hover {
-  color: var(--color-palm-deep);
+  a {
+    color: var(--color-palm);
+  }
+  a:hover {
+    color: var(--color-palm-deep);
+  }
 }
 
 ::-webkit-scrollbar {

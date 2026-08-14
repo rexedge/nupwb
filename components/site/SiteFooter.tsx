@@ -3,14 +3,26 @@ import { AnkaraPattern } from "./AnkaraPattern";
 import { WhatsAppGlyph } from "./WhatsAppGlyph";
 import { getVenueSettings, whatsappDigits } from "@/lib/venue";
 
-function SocialCircle({ label }: { label: string }) {
+function SocialCircle({ label, name, href }: { label: string; name: string; href: string | null }) {
+  const classes =
+    "flex h-11 w-11 items-center justify-center rounded-full border border-gold text-[15px] font-bold text-cream-text lg:h-12 lg:w-12";
+  if (!href) {
+    return (
+      <span aria-hidden className={`${classes} opacity-50`} title={`${name} — coming soon`}>
+        {label}
+      </span>
+    );
+  }
   return (
-    <span
-      aria-hidden
-      className="flex h-11 w-11 items-center justify-center rounded-full border border-gold text-[15px] font-bold text-cream-text lg:h-12 lg:w-12"
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={name}
+      className={`${classes} hover:bg-palm transition-colors`}
     >
       {label}
-    </span>
+    </a>
   );
 }
 
@@ -88,9 +100,9 @@ export async function SiteFooter() {
         </div>
 
         <div className="flex gap-3.5 lg:gap-3.5">
-          <SocialCircle label="IG" />
-          <SocialCircle label="FB" />
-          <SocialCircle label="TT" />
+          <SocialCircle label="IG" name="Instagram" href={venue.socialLinks.instagram} />
+          <SocialCircle label="FB" name="Facebook" href={venue.socialLinks.facebook} />
+          <SocialCircle label="TT" name="TikTok" href={venue.socialLinks.tiktok} />
         </div>
 
         <div
