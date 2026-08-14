@@ -145,8 +145,11 @@ export function CategoriesClient({
       <BottomSheet open={addOpen} onClose={() => setAddOpen(false)} title="New category">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-semibold text-[#1E1B16]">Name</label>
+            <label htmlFor="new-category-name" className="text-sm font-semibold text-[#1E1B16]">
+              Name
+            </label>
             <input
+              id="new-category-name"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="Pepper Soups"

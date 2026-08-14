@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useId, cloneElement, isValidElement } from "react";
+import type { ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import { Accordion } from "@/components/admin/Accordion";
 import { Toggle } from "@/components/admin/Toggle";
@@ -39,11 +40,14 @@ function SaveButton({ label, onClick, saved }: { label: string; onClick: () => v
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children }: { label: string; children: ReactElement<{ id?: string }> }) {
+  const id = useId();
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-semibold text-[#1E1B16]">{label}</label>
-      {children}
+      <label htmlFor={id} className="text-sm font-semibold text-[#1E1B16]">
+        {label}
+      </label>
+      {isValidElement(children) ? cloneElement(children, { id }) : children}
     </div>
   );
 }

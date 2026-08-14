@@ -174,10 +174,11 @@ export function ItemEditorForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-[#1E1B16]">
+          <label htmlFor="item-name" className="text-sm font-semibold text-[#1E1B16]">
             Item name <span className="font-normal text-[#B7202B]">Required</span>
           </label>
           <input
+            id="item-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="rounded-md border border-[#E0CD98] bg-[#FFFDF8] px-3.5 py-2.5 text-base text-[#1E1B16] focus:border-[#0E5C34] focus:outline-none"
@@ -197,10 +198,11 @@ export function ItemEditorForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-[#1E1B16]">
+          <label htmlFor="item-description" className="text-sm font-semibold text-[#1E1B16]">
             Description <span className="font-normal text-[#6E6455]">Optional — leave blank for drinks</span>
           </label>
           <textarea
+            id="item-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}

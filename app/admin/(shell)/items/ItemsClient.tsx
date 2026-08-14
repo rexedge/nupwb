@@ -432,9 +432,12 @@ export function ItemsClient({
             </button>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-semibold text-[#1E1B16]">By</label>
+            <label htmlFor="bulk-adjust-amount" className="text-sm font-semibold text-[#1E1B16]">
+              By
+            </label>
             <div className="flex gap-2">
               <input
+                id="bulk-adjust-amount"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 type="number"
