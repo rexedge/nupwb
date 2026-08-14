@@ -421,12 +421,15 @@ export const venueSettings = {
   whatsappNumber: "+234 806 332 6573",
   // Working placeholder in the venue's own domain — not a confirmed inbox. See outstandingQueries.
   email: "hello@nupwb.ng",
-  // No confirmed Maps link yet — pages build a maps.google.com search from `address` instead.
-  mapUrl: "",
+  // Confirmed Google Maps place link (exact coordinates), supplied by the site owner.
+  mapUrl:
+    "https://www.google.com/maps/place/Nwoke+Udi+Palm+Wine+Bar/@6.2259697,7.0671269,17z/data=!3m1!4b1!4m6!3m5!1s0x104383654c4fdbfb:0x19eabe1a7e74e26f!8m2!3d6.2259876!4d7.0672134!16s%2Fg%2F11jktnr0mx",
+  mapLat: 6.2259876,
+  mapLng: 7.0672134,
   socialLinks: {
-    instagram: null as string | null,
+    instagram: "https://www.instagram.com/nwokeudipalmwinebar/" as string | null,
     facebook: null as string | null,
-    tiktok: null as string | null,
+    tiktok: "https://www.tiktok.com/@nwokeudipalmwinebar.awka" as string | null,
   },
   openingHours: {
     monday: { open: "12:00", close: "23:00", closed: false },
@@ -455,7 +458,6 @@ export const outstandingQueries: string[] = [
   "Orijin Beer ₦1,500 — source carried an asterisk with no footnote",
   "Climax — ₦1,000 in first message, truncated in second; confirm",
   "Email — seeded as hello@nupwb.ng placeholder, confirm real inbox",
-  "Map location — no Google Maps link supplied yet, confirm coordinates",
-  "Social links (Instagram/Facebook/TikTok) — none supplied yet",
+  "Facebook page — not supplied yet (Instagram and TikTok confirmed)",
   "Opening hours — placeholders seeded, confirm actual times",
 ];

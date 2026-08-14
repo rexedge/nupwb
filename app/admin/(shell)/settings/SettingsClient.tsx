@@ -6,6 +6,7 @@ import { Accordion } from "@/components/admin/Accordion";
 import { Toggle } from "@/components/admin/Toggle";
 import type { VenueSettings } from "@/lib/venue";
 import { DAY_LABELS, type OpeningHours } from "@/lib/venue-utils";
+import { menuUrl as buildMenuUrl } from "@/lib/site-url";
 import {
   saveVenueDetailsAction,
   saveHoursAction,
@@ -73,7 +74,8 @@ export function SettingsClient({ venue, email }: { venue: VenueSettings; email: 
   const [socialSaved, setSocialSaved] = useState(false);
 
   const [copied, setCopied] = useState(false);
-  const menuUrl = `nupwb.ng/${venue.menuSlug}`;
+  const menuUrl = buildMenuUrl(venue.menuSlug);
+  const menuUrlDisplay = menuUrl.replace(/^https?:\/\//, "");
 
   const [pwState, pwAction, pwPending] = useActionState<ChangePasswordState, FormData>(changePasswordAction, {
     error: null,
@@ -114,7 +116,7 @@ export function SettingsClient({ venue, email }: { venue: VenueSettings; email: 
 
   async function copyMenuLink() {
     try {
-      await navigator.clipboard.writeText(`https://${menuUrl}`);
+      await navigator.clipboard.writeText(menuUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch {
@@ -249,7 +251,7 @@ export function SettingsClient({ venue, email }: { venue: VenueSettings; email: 
             <Field label="Public menu link">
               <div className="flex items-center gap-2">
                 <span className="flex-1 truncate rounded-md border border-[#E0CD98] bg-[#EFE7D6] px-3.5 py-2.5 text-sm text-[#1E1B16]">
-                  {menuUrl}
+                  {menuUrlDisplay}
                 </span>
                 <button
                   type="button"

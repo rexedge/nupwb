@@ -71,6 +71,8 @@ async function seedSettings() {
     ["whatsappNumber", venueSettings.whatsappNumber],
     ["email", venueSettings.email],
     ["mapUrl", venueSettings.mapUrl],
+    ["mapLat", venueSettings.mapLat],
+    ["mapLng", venueSettings.mapLng],
     ["socialLinks", venueSettings.socialLinks],
     ["openingHours", venueSettings.openingHours],
     ["showFinishedItems", venueSettings.showFinishedItems],

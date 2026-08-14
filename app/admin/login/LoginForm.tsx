@@ -31,7 +31,7 @@ export function LoginForm({ next }: { next: string }) {
           name="email"
           type="email"
           required
-          defaultValue="timothy@nupwb.ng"
+          autoComplete="email"
           className="rounded-md border border-[#E0CD98] bg-[#FBF6EC] px-3.5 py-2.5 text-base text-[#1E1B16] focus:border-[#0E5C34] focus:outline-none"
         />
       </div>

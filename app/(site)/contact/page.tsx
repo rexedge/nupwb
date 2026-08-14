@@ -50,7 +50,12 @@ export default async function ContactPage() {
   const venue = await getVenueSettings();
   const waHref = `https://wa.me/${whatsappDigits(venue.whatsappNumber)}`;
   const telHref = `tel:${venue.phone.replace(/\s/g, "")}`;
-  const mapsHref = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(venue.address);
+  const mapsHref =
+    venue.mapUrl || "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(venue.address);
+  const mapEmbedSrc =
+    venue.mapLat && venue.mapLng
+      ? `https://www.google.com/maps?q=${venue.mapLat},${venue.mapLng}&z=16&output=embed`
+      : null;
   const today = todayKey();
   const open = isOpenNow(venue.openingHours);
 
@@ -129,10 +134,19 @@ export default async function ContactPage() {
               </p>
             </div>
 
-            <div className="flex h-40 flex-col items-center justify-center rounded-md border border-[#D4A32C]/60 bg-[#EFE7D6] p-4 text-center">
-              <span className="font-bold text-[#0E5C34]">Club Road (Abakaliki Street)</span>
-              <span className="text-xs text-[#6E6455]">Awka, Anambra State</span>
-            </div>
+            {mapEmbedSrc ? (
+              <iframe
+                src={mapEmbedSrc}
+                title="Map"
+                loading="lazy"
+                className="h-40 w-full rounded-md border border-[#D4A32C]/60"
+              />
+            ) : (
+              <div className="flex h-40 flex-col items-center justify-center rounded-md border border-[#D4A32C]/60 bg-[#EFE7D6] p-4 text-center">
+                <span className="font-bold text-[#0E5C34]">Club Road (Abakaliki Street)</span>
+                <span className="text-xs text-[#6E6455]">Awka, Anambra State</span>
+              </div>
+            )}
 
             <a
               href={mapsHref}

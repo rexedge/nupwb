@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { WhatsAppGlyph } from "./WhatsAppGlyph";
 import { naira } from "@/lib/money";
 import { whatsappDigits } from "@/lib/venue-utils";
+import { menuUrl as buildMenuUrl } from "@/lib/site-url";
 import type { CategoryWithItems } from "@/lib/queries";
 
 function stripPrefix(name: string, prefix?: string | null): string {
@@ -116,7 +117,7 @@ export function MenuView({
     sectionRefs.current[slug]?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  const menuUrl = `https://nupwb.ng/${menuSlug}`;
+  const menuUrl = buildMenuUrl(menuSlug);
   const waHref = `https://wa.me/${whatsappDigits(whatsappNumber)}`;
   const shareHref = `https://wa.me/?text=${encodeURIComponent(`Check out the ${kind} menu at ${venueName}: ${menuUrl}`)}`;
 
@@ -132,7 +133,9 @@ export function MenuView({
 
   return (
     <div className="flex flex-1 flex-col bg-card-alt">
-      <div className="sticky top-[57px] z-20 flex flex-col gap-2.5 border-b border-[#E0CD98] bg-card-alt px-4 py-3 lg:top-[65px] lg:px-10">
+      {/* top offset must match Header's rendered height (logo row + padding + Akwete seal strip):
+          75px mobile (44px logo + 20px py-2.5 + 11px seal), 93px desktop (56px logo + 24px lg:py-3 + 13px seal) */}
+      <div className="sticky top-[75px] z-20 flex flex-col gap-2.5 border-b border-[#E0CD98] bg-card-alt px-4 py-3 lg:top-[93px] lg:px-10">
         <div className="mx-auto w-full max-w-[1240px]">
           <div className="relative">
             <input
@@ -189,7 +192,7 @@ export function MenuView({
             ref={(el) => {
               sectionRefs.current[category.slug] = el;
             }}
-            className="scroll-mt-32"
+            className="scroll-mt-[220px] lg:scroll-mt-[240px]"
           >
             <div className="mb-2.5 flex items-baseline justify-between gap-3">
               <h2 className="font-display text-[24px] font-bold text-ink lg:text-[28px]">{category.name}</h2>
@@ -206,7 +209,7 @@ export function MenuView({
         <div className="relative overflow-hidden rounded-md border border-[#E0CD98] bg-card p-5">
           <h3 className="font-display text-[20px] font-semibold text-ink">Share this menu</h3>
           <p className="mt-1 hidden text-[15px] text-muted lg:block">
-            nupwb.ng/{menuSlug} — the same list your table code opens.
+            {menuUrl.replace(/^https?:\/\//, "")} — the same list your table code opens.
           </p>
           <div className="mt-3 flex flex-wrap gap-2.5">
             <a

@@ -15,6 +15,8 @@ export type VenueSettings = {
   whatsappNumber: string;
   email: string;
   mapUrl: string;
+  mapLat: number | null;
+  mapLng: number | null;
   socialLinks: { instagram: string | null; facebook: string | null; tiktok: string | null };
   openingHours: OpeningHours;
   showFinishedItems: boolean;
@@ -36,6 +38,8 @@ export async function getVenueSettings(): Promise<VenueSettings> {
     whatsappNumber: str("whatsappNumber", defaults.whatsappNumber),
     email: str("email", defaults.email),
     mapUrl: str("mapUrl", defaults.mapUrl),
+    mapLat: rows.mapLat ? Number(rows.mapLat) : (defaults.mapLat ?? null),
+    mapLng: rows.mapLng ? Number(rows.mapLng) : (defaults.mapLng ?? null),
     socialLinks: rows.socialLinks ? JSON.parse(rows.socialLinks) : defaults.socialLinks,
     openingHours: rows.openingHours ? JSON.parse(rows.openingHours) : defaults.openingHours,
     showFinishedItems: rows.showFinishedItems ? rows.showFinishedItems === "true" : defaults.showFinishedItems,

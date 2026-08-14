@@ -18,7 +18,7 @@ function seededRandom(seed: string) {
 }
 
 /** Draws a QR-shaped visual placeholder — finder/alignment/timing patterns, NOT a scannable code. */
-function render(canvas: HTMLCanvasElement, seed: string) {
+export function renderQrPattern(canvas: HTMLCanvasElement, seed: string) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
@@ -92,7 +92,7 @@ export const QrCanvas = forwardRef<HTMLCanvasElement, { seed: string; size?: num
     useImperativeHandle(forwardedRef, () => innerRef.current as HTMLCanvasElement);
 
     useEffect(() => {
-      if (innerRef.current) render(innerRef.current, seed);
+      if (innerRef.current) renderQrPattern(innerRef.current, seed);
     }, [seed]);
 
     return (
@@ -108,11 +108,28 @@ export const QrCanvas = forwardRef<HTMLCanvasElement, { seed: string; size?: num
   },
 );
 
-export function downloadCanvasPng(canvas: HTMLCanvasElement | null, filename: string) {
-  if (!canvas) return;
-  const url = canvas.toDataURL("image/png");
+function triggerDownload(dataUrl: string, filename: string) {
   const link = document.createElement("a");
-  link.href = url;
+  link.href = dataUrl;
   link.download = filename;
   link.click();
+}
+
+/** Creates a standalone offscreen canvas with the QR pattern painted at `size` px — for
+ * embedding into a larger composition (print assets) or downloading directly. */
+export function createQrCanvas(seed: string, size: number): HTMLCanvasElement {
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  renderQrPattern(canvas, seed);
+  return canvas;
+}
+
+/**
+ * Renders the QR-style graphic at a high, print-quality resolution (independent of whatever
+ * size is shown on screen) and downloads it. `size` is in raster pixels — use something like
+ * 1200 for a screen-sized download, 2400+ for large print assets (posters, table tents).
+ */
+export function downloadQr(seed: string, size: number, filename: string) {
+  triggerDownload(createQrCanvas(seed, size).toDataURL("image/png"), filename);
 }

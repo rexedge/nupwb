@@ -1,5 +1,8 @@
 import { AkwateBand } from "@/components/site/AkwateBand";
 import { getVenueSettings, whatsappDigits } from "@/lib/venue";
+import { menuUrl as buildMenuUrl } from "@/lib/site-url";
+import { getMenu } from "@/lib/queries";
+import { naira } from "@/lib/money";
 import { ShareClient } from "./ShareClient";
 
 // Reads venue settings from the DB — keep dynamic so admin edits show up without a redeploy.
@@ -7,8 +10,16 @@ export const dynamic = "force-dynamic";
 
 export default async function ShareQrPage() {
   const venue = await getVenueSettings();
-  const menuUrl = `https://nupwb.ng/${venue.menuSlug}`;
+  const menuUrl = buildMenuUrl(venue.menuSlug);
   const waHref = `https://wa.me/?text=${encodeURIComponent(`Check out the ${venue.venueName} menu: ${menuUrl}`)}`;
+
+  const drinkCategories = await getMenu("DRINK");
+  const palmWine = drinkCategories.find((c) => c.slug === "palm-wine");
+  const palmWineRows = (palmWine?.items ?? []).flatMap((item) =>
+    item.variants.length === 1 && item.variants[0].label === null
+      ? [{ name: item.name, price: naira(item.variants[0].priceMinor) }]
+      : item.variants.map((v) => ({ name: `${item.name} — ${v.label}`, price: naira(v.priceMinor) })),
+  );
 
   return (
     <div className="flex flex-1 flex-col bg-[#FBF6EC]">
@@ -27,8 +38,16 @@ export default async function ShareQrPage() {
       <AkwateBand />
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-10 px-4 py-10 sm:px-6">
-        <ShareClient menuUrl={menuUrl} waHref={waHref} venueName={venue.venueName} />
+        <ShareClient
+          menuUrl={menuUrl}
+          waHref={waHref}
+          venueName={venue.venueName}
+          phone={venue.phone}
+          palmWineRows={palmWineRows}
+          palmWineNote={palmWine?.note ?? "Ask what came in this morning."}
+        />
 
+        {/* Guest Wi-Fi Access box — disabled until real SSID/key are confirmed.
         <div className="flex flex-col items-center justify-between gap-4 rounded-lg border border-[#E0CD98] bg-[#FFFDF8] p-6 shadow-sm sm:flex-row">
           <div>
             <h3 className="font-display text-lg font-bold text-[#1E1B16]">Guest Wi-Fi Access</h3>
@@ -43,6 +62,7 @@ export default async function ShareQrPage() {
             </span>
           </div>
         </div>
+        */}
       </section>
     </div>
   );

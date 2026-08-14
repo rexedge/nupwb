@@ -1,6 +1,7 @@
 import { ImagePlaceholder } from "./ImagePlaceholder";
 import { WhatsAppGlyph } from "./WhatsAppGlyph";
 import { getVenueSettings, DAY_LABELS, todayKey, type OpeningHours } from "@/lib/venue";
+import { SITE_URL, menuUrl } from "@/lib/site-url";
 
 const DAY_ORDER: (keyof OpeningHours)[] = [
   "monday",
@@ -65,10 +66,12 @@ function VisitUsCard({
   hours,
   address,
   mapsHref,
+  mapEmbedSrc,
 }: {
   hours: ReturnType<typeof collapseHours>;
   address: string;
   mapsHref: string;
+  mapEmbedSrc: string | null;
 }) {
   const today = todayKey();
 
@@ -111,8 +114,17 @@ function VisitUsCard({
         <p className="text-[16px] leading-[1.55] text-ink lg:text-[17px]">{address}</p>
       </div>
 
-      <div className="relative h-37.5 border border-[#E0CD98] bg-card p-1.25 lg:h-57.5 lg:min-h-57.5 lg:p-1.5">
-        <ImagePlaceholder label="Map preview" className="absolute inset-1.25 lg:inset-1.5" />
+      <div className="relative h-37.5 overflow-hidden border border-[#E0CD98] bg-card p-1.25 lg:h-57.5 lg:min-h-57.5 lg:p-1.5">
+        {mapEmbedSrc ? (
+          <iframe
+            src={mapEmbedSrc}
+            title="Map"
+            loading="lazy"
+            className="absolute inset-1.25 h-[calc(100%-10px)] w-[calc(100%-10px)] border-0 lg:inset-1.5 lg:h-[calc(100%-12px)] lg:w-[calc(100%-12px)]"
+          />
+        ) : (
+          <ImagePlaceholder label="Map preview" className="absolute inset-1.25 lg:inset-1.5" />
+        )}
       </div>
 
       <a
@@ -138,7 +150,9 @@ function ShareCard({ menuSlug, shareHref }: { menuSlug: string; shareHref: strin
             Scan or share
             <br className="hidden lg:block" /> our menu
           </p>
-          <p className="text-[16px] text-muted lg:text-[17px]">nupwb.ng/{menuSlug}</p>
+          <p className="text-[16px] text-muted lg:text-[17px]">
+            {SITE_URL.replace(/^https?:\/\//, "")}/{menuSlug}
+          </p>
         </div>
       </div>
       <p className="hidden text-[17px] leading-[1.6] text-muted lg:block">
@@ -165,15 +179,20 @@ export async function VisitAndShare() {
   const venue = await getVenueSettings();
   const hours = collapseHours(venue.openingHours);
   const mapsHref =
+    venue.mapUrl ||
     "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(venue.address);
+  const mapEmbedSrc =
+    venue.mapLat && venue.mapLng
+      ? `https://www.google.com/maps?q=${venue.mapLat},${venue.mapLng}&z=16&output=embed`
+      : null;
   const shareHref =
     "https://wa.me/?text=" +
-    encodeURIComponent(`Check out the menu at ${venue.venueName}: https://nupwb.ng/${venue.menuSlug}`);
+    encodeURIComponent(`Check out the menu at ${venue.venueName}: ${menuUrl(venue.menuSlug)}`);
 
   return (
     <section className="bg-card-alt px-5 py-7.5 lg:px-10 lg:py-19">
       <div className="flex flex-col-reverse gap-5 lg:mx-auto lg:max-w-[1240px] lg:flex-row lg:items-stretch lg:gap-8">
-        <VisitUsCard hours={hours} address={venue.address} mapsHref={mapsHref} />
+        <VisitUsCard hours={hours} address={venue.address} mapsHref={mapsHref} mapEmbedSrc={mapEmbedSrc} />
         <ShareCard menuSlug={venue.menuSlug} shareHref={shareHref} />
       </div>
     </section>
