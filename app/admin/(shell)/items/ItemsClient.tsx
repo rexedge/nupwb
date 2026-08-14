@@ -160,7 +160,9 @@ export function ItemsClient({
   function startEdit(item: ItemRow) {
     if (item.variants.length !== 1) return;
     setEditingId(item.id);
-    setDraftPrice(String(Math.round(item.variants[0].priceMinor / 100)));
+    // Start empty rather than pre-filled — this is a numeric keypad for typing the NEW price,
+    // not a text field for editing the old one digit-by-digit.
+    setDraftPrice("");
   }
 
   function pressKey(key: string) {
@@ -173,7 +175,12 @@ export function ItemsClient({
 
   async function saveEdit() {
     if (!editingId) return;
-    const naira = parseInt(draftPrice || "0", 10);
+    if (!draftPrice) {
+      // Nothing typed — treat Save as a no-op close rather than zeroing the price out.
+      setEditingId(null);
+      return;
+    }
+    const naira = parseInt(draftPrice, 10);
     await updateSingleVariantPriceAction(editingId, naira * 100);
     setEditingId(null);
     router.refresh();
@@ -299,7 +306,7 @@ export function ItemsClient({
                   <div className="flex flex-1 flex-col">
                     <span className="text-[15px] font-semibold text-[#1E1B16]">{item.name}</span>
                     <span className="flex items-baseline gap-1 font-mono text-lg font-bold text-[#0E5C34]">
-                      ₦{draftPrice || "0"}
+                      ₦{Number(draftPrice || "0").toLocaleString("en-NG")}
                     </span>
                   </div>
                   <button
@@ -351,7 +358,7 @@ export function ItemsClient({
       </div>
 
       {editingItem && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#E0CD98] bg-[#FFFDF8] p-3 shadow-2xl">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E0CD98] bg-[#FFFDF8] p-3 shadow-2xl">
           <div className="mb-2 flex items-center justify-between text-sm">
             <span className="font-semibold text-[#1E1B16]">{editingItem.name}</span>
             <span className="text-[#6E6455]">was {naira(editingItem.variants[0].priceMinor)}</span>
@@ -374,7 +381,7 @@ export function ItemsClient({
       )}
 
       {bulkMode && selected.size > 0 && !editingItem && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#E0CD98] bg-[#FFFDF8] p-4 shadow-2xl">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E0CD98] bg-[#FFFDF8] p-4 shadow-2xl">
           <div className="mb-2 flex items-center justify-between text-sm">
             <span className="font-semibold text-[#1E1B16]">{selected.size} selected</span>
             <button type="button" onClick={() => setSelected(new Set())} className="font-semibold text-[#0E5C34]">
@@ -403,7 +410,8 @@ export function ItemsClient({
       {!bulkMode && !editingItem && (
         <Link
           href="/admin/items/new"
-          className="fixed bottom-6 right-5 z-20 flex h-15 w-15 items-center justify-center rounded-full border border-[#D4A32C] bg-[#0E5C34] text-2xl font-bold text-[#FBF6EC] shadow-lg"
+          aria-label="Add new item"
+          className="fixed bottom-20 right-5 z-40 flex h-15 w-15 items-center justify-center rounded-full border border-[#D4A32C] bg-[#0E5C34] text-2xl font-bold text-[#FBF6EC] shadow-lg lg:bottom-8"
         >
           +
         </Link>
