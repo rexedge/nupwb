@@ -5,12 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { logoutAction } from "@/app/admin/login/actions";
+import { DashboardIcon, MenuListIcon, QrGlyphIcon, SettingsSlidersIcon } from "./NavIcons";
 
 const NAV_ITEMS = [
-  { label: "Dashboard", href: "/admin" },
-  { label: "Menu", href: "/admin/items" },
-  { label: "QR", href: "/share" },
-  { label: "Settings", href: "/admin/settings" },
+  { label: "Dashboard", href: "/admin", Icon: DashboardIcon },
+  { label: "Menu", href: "/admin/items", Icon: MenuListIcon },
+  { label: "QR", href: "/share", Icon: QrGlyphIcon },
+  { label: "Settings", href: "/admin/settings", Icon: SettingsSlidersIcon },
 ] as const;
 
 function initialsFromEmail(email: string): string {
@@ -43,12 +44,13 @@ export function AdminShell({ email, children }: { email: string; children: React
             <Link
               key={item.href}
               href={item.href}
-              className={`rounded-md px-4 py-2.5 text-[15px] font-semibold transition-colors ${
+              className={`flex items-center gap-3 rounded-md px-4 py-2.5 text-[15px] font-semibold transition-colors ${
                 isActive(item.href)
                   ? "border-l-[3px] border-[#D4A32C] bg-[#D4A32C]/10 text-[#0E5C34]"
                   : "border-l-[3px] border-transparent text-[#1E1B16] hover:bg-[#EFE7D6]"
               }`}
             >
+              <item.Icon className="h-5 w-5 shrink-0" />
               {item.label}
             </Link>
           ))}
@@ -130,6 +132,7 @@ export function AdminShell({ email, children }: { email: string; children: React
                 isActive(item.href) ? "border-t-[3px] border-[#D4A32C] text-[#0E5C34]" : "border-t-[3px] border-transparent text-[#6E6455]"
               }`}
             >
+              <item.Icon className={`h-5 w-5 ${isActive(item.href) ? "text-[#D4A32C]" : ""}`} />
               {item.label}
             </Link>
           ))}
