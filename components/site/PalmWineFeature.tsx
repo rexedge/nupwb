@@ -49,7 +49,7 @@ export function PalmWineFeature() {
             <PriceChip label="Soft Pammy" price="₦5,000" />
           </div>
           <Link
-            href="/drinks"
+            href="/menu"
             className="flex h-13 items-center justify-center rounded-md border border-gold text-[17px] font-semibold text-cream-text! lg:h-14 lg:w-fit lg:px-8 lg:text-[18px]"
           >
             See the Drinks Menu

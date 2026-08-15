@@ -5,8 +5,8 @@ import { AnkaraPattern } from "@/components/site/AnkaraPattern";
 
 const LINKS = [
   { label: "Home", href: "/", desc: "Start from the top" },
-  { label: "Drinks Menu", href: "/drinks", desc: "Palm wine, beer, cocktails" },
-  { label: "Food Menu", href: "/menu", desc: "Isi ewu, nkwobi, abacha, grills" },
+  { label: "Drinks Menu", href: "/menu", desc: "Palm wine, beer, cocktails" },
+  { label: "Food Menu", href: "/food", desc: "Isi ewu, nkwobi, abacha, grills" },
   { label: "Contact", href: "/contact", desc: "Hours, directions, WhatsApp" },
 ] as const;
 

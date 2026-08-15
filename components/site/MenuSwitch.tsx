@@ -22,10 +22,10 @@ export function MenuSwitch({ current }: { current: "drinks" | "food" }) {
         </svg>
         Home
       </Link>
-      <Link href="/drinks" className={`${base} ${current === "drinks" ? active : idle}`} aria-current={current === "drinks" ? "page" : undefined}>
+      <Link href="/menu" className={`${base} ${current === "drinks" ? active : idle}`} aria-current={current === "drinks" ? "page" : undefined}>
         Drinks
       </Link>
-      <Link href="/menu" className={`${base} ${current === "food" ? active : idle}`} aria-current={current === "food" ? "page" : undefined}>
+      <Link href="/food" className={`${base} ${current === "food" ? active : idle}`} aria-current={current === "food" ? "page" : undefined}>
         Food
       </Link>
     </nav>

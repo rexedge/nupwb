@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation";
 const navItems = [
   { href: "/", label: "Design System Home" },
   { href: "/about", label: "About (Akụkọ Anyị)" },
-  { href: "/drinks", label: "Drinks Menu" },
-  { href: "/menu", label: "Food Menu" },
+  { href: "/menu", label: "Drinks Menu" },
+  { href: "/food", label: "Food Menu" },
   { href: "/contact", label: "Contact & Hours" },
   { href: "/admin", label: "Admin Dashboard" },
   { href: "/admin/edit", label: "Admin Item Editor" },

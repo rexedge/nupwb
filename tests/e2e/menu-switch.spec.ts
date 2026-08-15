@@ -6,7 +6,7 @@ test.use({ ...devices["iPhone 13"] });
  * A guest who scans a table QR lands on one menu. The Home/Drinks/Food switcher must be on
  * screen without scrolling, or they cannot find the other menu without opening the hamburger.
  */
-for (const entry of ["/nwoke-udi", "/menu", "/drinks"]) {
+for (const entry of ["/nwoke-udi", "/menu", "/food"]) {
   test(`${entry}: menu switcher is above the fold and works`, async ({ page }) => {
     await page.goto(entry);
     await page.waitForLoadState("networkidle");
@@ -25,11 +25,11 @@ for (const entry of ["/nwoke-udi", "/menu", "/drinks"]) {
     const nav_timeout = { timeout: 30_000 };
 
     await nav.getByRole("link", { name: "Drinks" }).click();
-    await expect(page).toHaveURL(/\/drinks$/, nav_timeout);
+    await expect(page).toHaveURL(/\/menu$/, nav_timeout);
     await expect(nav.getByRole("link", { name: "Drinks" })).toHaveAttribute("aria-current", "page");
 
     await nav.getByRole("link", { name: "Food" }).click();
-    await expect(page).toHaveURL(/\/menu$/, nav_timeout);
+    await expect(page).toHaveURL(/\/food$/, nav_timeout);
     await expect(nav.getByRole("link", { name: "Food" })).toHaveAttribute("aria-current", "page");
 
     await nav.getByRole("link", { name: "Home" }).click();
@@ -38,7 +38,7 @@ for (const entry of ["/nwoke-udi", "/menu", "/drinks"]) {
 }
 
 test("sharwama prices show on the food menu, below the other food sections", async ({ page }) => {
-  await page.goto("/menu");
+  await page.goto("/food");
   await page.waitForLoadState("networkidle");
 
   const section = page.locator('[data-slug="sharwama"]');

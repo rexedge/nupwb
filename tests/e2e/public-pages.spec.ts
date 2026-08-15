@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const PUBLIC_ROUTES = ["/", "/about", "/menu", "/drinks", "/contact", "/share"];
+const PUBLIC_ROUTES = ["/", "/about", "/menu", "/food", "/contact", "/share"];
 
 for (const route of PUBLIC_ROUTES) {
   test(`${route || "home"} renders with no console errors`, async ({ page }) => {

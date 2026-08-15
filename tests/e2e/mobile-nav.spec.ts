@@ -9,7 +9,7 @@ test("mobile drawer menu shows all labels including Drinks", async ({ page }) =>
   });
   page.on("pageerror", (err) => errors.push(err.message));
 
-  await page.goto("/drinks");
+  await page.goto("/menu");
   await page.waitForLoadState("networkidle");
 
   await page.getByRole("button", { name: "Toggle menu" }).click();

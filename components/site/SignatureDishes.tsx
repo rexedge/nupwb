@@ -54,7 +54,7 @@ export async function SignatureDishes() {
       <div className="flex flex-col gap-4 pt-5.5 lg:mx-auto lg:max-w-[1240px] lg:gap-7 lg:pt-0 lg:px-10">
         <div className="flex items-end justify-between gap-3 px-5 lg:px-0">
           <h2 className="font-display text-[28px] font-bold text-ink lg:text-[42px]">Signature Dishes</h2>
-          <Link href="/menu" className="whitespace-nowrap text-[16px] font-semibold text-palm! lg:text-[18px]">
+          <Link href="/food" className="whitespace-nowrap text-[16px] font-semibold text-palm! lg:text-[18px]">
             All food →
           </Link>
         </div>

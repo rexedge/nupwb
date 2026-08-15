@@ -10,8 +10,8 @@ import { WhatsAppGlyph } from "./WhatsAppGlyph";
 const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Drinks", href: "/drinks" },
-  { label: "Food", href: "/menu" },
+  { label: "Drinks", href: "/menu" },
+  { label: "Food", href: "/food" },
   { label: "Contact", href: "/contact" },
 ] as const;
 

@@ -33,7 +33,7 @@ export async function QuickLinks() {
     <div className="bg-card-alt px-4 pt-5 pb-5.5 lg:px-10 lg:pt-7 lg:pb-8.5">
       <div className="grid grid-cols-2 gap-3 lg:mx-auto lg:max-w-[1240px] lg:grid-cols-3 lg:gap-5">
         <Link
-          href="/drinks"
+          href="/menu"
           className="flex h-26 flex-col items-center justify-center gap-2.5 rounded-md border border-[#E0CD98] bg-card text-ink! lg:h-24 lg:flex-row lg:justify-start lg:gap-4 lg:px-6"
         >
           <DrinksIcon />
@@ -44,7 +44,7 @@ export async function QuickLinks() {
         </Link>
 
         <Link
-          href="/menu"
+          href="/food"
           className="flex h-26 flex-col items-center justify-center gap-2.5 rounded-md border border-[#E0CD98] bg-card text-ink! lg:h-24 lg:flex-row lg:justify-start lg:gap-4 lg:px-6"
         >
           <FoodIcon />
